@@ -1,0 +1,6 @@
+framework module IAInfiniteGridView {
+  umbrella header "IAInfiniteGridView-umbrella.h"
+
+  export *
+  module * { export * }
+}

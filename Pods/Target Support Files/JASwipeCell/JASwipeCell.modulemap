@@ -1,0 +1,6 @@
+framework module JASwipeCell {
+  umbrella header "JASwipeCell-umbrella.h"
+
+  export *
+  module * { export * }
+}

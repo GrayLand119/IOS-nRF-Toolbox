@@ -1,24 +1,132 @@
 PODS:
+  - AFNetworking (2.6.3):
+    - AFNetworking/NSURLConnection (= 2.6.3)
+    - AFNetworking/NSURLSession (= 2.6.3)
+    - AFNetworking/Reachability (= 2.6.3)
+    - AFNetworking/Security (= 2.6.3)
+    - AFNetworking/Serialization (= 2.6.3)
+    - AFNetworking/UIKit (= 2.6.3)
+  - AFNetworking/NSURLConnection (2.6.3):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/NSURLSession (2.6.3):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (2.6.3)
+  - AFNetworking/Security (2.6.3)
+  - AFNetworking/Serialization (2.6.3)
+  - AFNetworking/UIKit (2.6.3):
+    - AFNetworking/NSURLConnection
+    - AFNetworking/NSURLSession
+  - CocoaLumberjack (2.4.0):
+    - CocoaLumberjack/Default (= 2.4.0)
+    - CocoaLumberjack/Extensions (= 2.4.0)
+  - CocoaLumberjack/Core (2.4.0)
+  - CocoaLumberjack/Default (2.4.0):
+    - CocoaLumberjack/Core
+  - CocoaLumberjack/Extensions (2.4.0):
+    - CocoaLumberjack/Default
   - CorePlot (2.1)
+  - DACircularProgress (2.3.1)
   - EVReflection (2.45.0)
+  - FMDB (2.6.2):
+    - FMDB/standard (= 2.6.2)
+  - FMDB/standard (2.6.2)
+  - FXBlurView (1.6.4)
+  - IAInfiniteGridView (0.1.4)
   - iOSDFULibrary (1.0.12):
     - Zip (~> 0.3)
+  - JASwipeCell (1.0.1)
+  - MagicalRecord (2.3.2):
+    - MagicalRecord/Core (= 2.3.2)
+  - MagicalRecord/CocoaLumberjack (2.3.2):
+    - CocoaLumberjack (~> 2.0)
+    - MagicalRecord/Core
+  - MagicalRecord/Core (2.3.2)
+  - Masonry (0.6.4)
+  - MBProgressHUD (0.9.2)
+  - MJRefresh (3.0.8)
+  - MWPhotoBrowser (2.1.2):
+    - DACircularProgress (~> 2.3)
+    - MBProgressHUD (~> 0.9)
+    - SDWebImage (!= 3.7.2, ~> 3.7)
+  - NJKWebViewProgress (0.2.3):
+    - NJKWebViewProgress/Core (= 0.2.3)
+    - NJKWebViewProgress/ProgressView (= 0.2.3)
+  - NJKWebViewProgress/Core (0.2.3)
+  - NJKWebViewProgress/ProgressView (0.2.3)
+  - Reachability (3.2)
+  - ReactiveCocoa (2.5):
+    - ReactiveCocoa/UI (= 2.5)
+  - ReactiveCocoa/Core (2.5):
+    - ReactiveCocoa/no-arc
+  - ReactiveCocoa/no-arc (2.5)
+  - ReactiveCocoa/UI (2.5):
+    - ReactiveCocoa/Core
+  - SDWebImage (3.8.2):
+    - SDWebImage/Core (= 3.8.2)
+  - SDWebImage/Core (3.8.2)
   - SWRevealViewController (2.3.0)
+  - UMengAnalytics-NO-IDFA (4.1.3)
+  - WebViewJavascriptBridge (4.1.5)
+  - WEPopover (1.0.0)
+  - YYModel (0.9.12)
   - Zip (0.4.3)
 
 DEPENDENCIES:
-  - CorePlot (~> 2.1)
-  - EVReflection
+  - AFNetworking (~> 2.6.3)
+  - CorePlot (= 2.1)
+  - DACircularProgress (~> 2.3.1)
+  - EVReflection (= 2.45.0)
+  - FMDB (~> 2.6.2)
+  - FXBlurView (~> 1.6.4)
+  - IAInfiniteGridView (~> 0.1.4)
   - iOSDFULibrary (~> 1.0)
-  - SWRevealViewController (~> 2.3)
+  - JASwipeCell (~> 1.0.1)
+  - MagicalRecord (~> 2.3.0)
+  - MagicalRecord/CocoaLumberjack
+  - Masonry (~> 0.6.3)
+  - MBProgressHUD (~> 0.9.1)
+  - MJRefresh (~> 3.0.6)
+  - MWPhotoBrowser (~> 2.1.1)
+  - NJKWebViewProgress (~> 0.2.3)
+  - Reachability (~> 3.2)
+  - ReactiveCocoa (~> 2.5)
+  - SDWebImage (~> 3.7)
+  - SWRevealViewController (> 2.3)
+  - UMengAnalytics-NO-IDFA
+  - WebViewJavascriptBridge (~> 4.1.4)
+  - WEPopover (~> 1.0.0)
+  - YYModel (~> 0.9.12)
+  - Zip (= 0.4.3)
 
 SPEC CHECKSUMS:
+  AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
+  CocoaLumberjack: aa9dcab71bdf9eaf2a63bbd9ddc87863efe45457
   CorePlot: ab9898c79b94999018e9634ab0aa4c21480c8552
+  DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   EVReflection: aa7065b5757b4efd7265cdb17074aeef57c3f981
+  FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
+  FXBlurView: db786c2561cb49a09ae98407f52460096ab8a44f
+  IAInfiniteGridView: e28f2c844315a19c5325702b34dc2685d452d998
   iOSDFULibrary: ad41b45f7cfcfc6d52a9250f6c38646bc4b77597
+  JASwipeCell: fa161a9ef3d9fdd94f1d2f8b4d2e8118884cc6b0
+  MagicalRecord: 53bed74b4323b930992a725be713e53b37d19755
+  Masonry: 281802d04d787ea2973179ee8bcb50500579ede2
+  MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
+  MJRefresh: fafde8f18f4afd66b434331a9beb67a6c0264056
+  MWPhotoBrowser: 5836d7aa041dc05a13de380c246826578adc5ea5
+  NJKWebViewProgress: f481fd424cb5ecc27eacae11b5397db92fba9a4d
+  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
+  ReactiveCocoa: e2db045570aa97c695e7aa97c2bcab222ae51f4a
+  SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SWRevealViewController: 6d3fd97f70112fd7cef9de14df4260eacce4c63a
+  UMengAnalytics-NO-IDFA: b26a7003458204d4549b6bd132c2f07dd5942b86
+  WebViewJavascriptBridge: e7b6669bebfc4f151daa0fdec3c8c24c8dc3a24e
+  WEPopover: 615c27637d1763731cf7c51a9385ff1f25ff4816
+  YYModel: 33a27f41a995f4c36ff8178421bac9f221a9c7ea
   Zip: 670419a5ba9faaf5f24ed3650c4c38b4136e996b
 
-PODFILE CHECKSUM: 1d9edd1788f2431dd0436acdbf53ef709320093d
-
-COCOAPODS: 1.1.0.beta.1
+COCOAPODS: 0.39.0
