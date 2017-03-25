@@ -1,34 +1,6 @@
 # IOS-nRF-Toolbox
 
-The nRF Toolbox is a container app that stores your Nordic Semiconductor apps for Bluetooth Smart in one location. 
-
-New in v4.0.4:
-* The application now fully supports Secure DFU
-* Fixed potential memory leaks
-* Full support of the Continuous Glucose monitor
-
-New in v4.0:
-* The application is fully migrated to Swift2.2
-* Added **Continuous Glucose Monitor** profile support
-* The Application now uses the Cocoapods version of our DFU Library. See [cocoapods/iOSDFULibrary](https://cocoapods.org/pods/iOSDFULibrary)
-* Minor bugfixes in characteristics reading on some profiles
-
-New in v3.0:
-* The application uses DFU Library, instead of having it's own implementation. See [IOS-DFU-Library](https://github.com/NordicSemiconductor/IOS-DFU-Library).
-
-New in v2.5:
-* Refreshed Look & Feel
-* Better user experience in DFU and UART profiles
-* Bug fixes
-
-It contains applications demonstrating Bluetooth Smart profiles: 
-* **Cycling Speed and Cadence**, 
-* **Running Speed and Cadence**, 
-* **Heart Rate Monitor**, 
-* **Blood Pressure Monitor**, 
-* **Health Thermometer Monitor**, 
-* **Glucose Monitor**,
-* **Proximity Monitor**. 
+Modify DFU moudle for Odun and Icomwell company.
 
 ### Device Firmware Update
 
