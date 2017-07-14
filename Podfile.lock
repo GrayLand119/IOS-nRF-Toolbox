@@ -1,4 +1,5 @@
 PODS:
+<<<<<<< HEAD
   - AFNetworking (2.6.3):
     - AFNetworking/NSURLConnection (= 2.6.3)
     - AFNetworking/NSURLSession (= 2.6.3)
@@ -130,3 +131,30 @@ SPEC CHECKSUMS:
   Zip: 670419a5ba9faaf5f24ed3650c4c38b4136e996b
 
 COCOAPODS: 0.39.0
+=======
+  - CorePlot (2.2)
+  - EVReflection (4.5.0):
+    - EVReflection/Core (= 4.5.0)
+  - EVReflection/Core (4.5.0)
+  - iOSDFULibrary (3.0.6):
+    - Zip (~> 0.6)
+  - SWRevealViewController (2.3.0)
+  - Zip (0.6.0)
+
+DEPENDENCIES:
+  - CorePlot (~> 2.2)
+  - EVReflection (~> 4.5)
+  - iOSDFULibrary (~> 3.0)
+  - SWRevealViewController (~> 2.3)
+
+SPEC CHECKSUMS:
+  CorePlot: cbe0c6e14220705e32e06a89c7d6a5a908b7d7d8
+  EVReflection: f3ef628809585feefa72bf6a8b1ffd3a7a619bdb
+  iOSDFULibrary: e9f7838a54eed84228669c7739d8d7ed98d3da31
+  SWRevealViewController: 6d3fd97f70112fd7cef9de14df4260eacce4c63a
+  Zip: 805fc2fa9d2f05bbb7762d982d7a42ccdcc51f42
+
+PODFILE CHECKSUM: 04952fbe2bcb7bb9893a38aae5bee36c631e4f22
+
+COCOAPODS: 1.2.0.rc.1
+>>>>>>> NordicSemiconductor/master

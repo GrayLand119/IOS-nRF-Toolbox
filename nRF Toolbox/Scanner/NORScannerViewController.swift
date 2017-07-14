@@ -9,82 +9,127 @@
 import UIKit
 import CoreBluetooth
 
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
+
 class NORScannerViewController: UIViewController, CBCentralManagerDelegate, UITableViewDelegate, UITableViewDataSource {
-    
+
     let dfuServiceUUIDString  = "00001530-1212-EFDE-1523-785FEABCD123"
     let ANCSServiceUUIDString = "7905F431-B5CE-4E99-A40F-4B1E122D00D0"
 
     //MARK: - ViewController Properties
     var bluetoothManager : CBCentralManager?
-    var delegate         : protocol<NORScannerDelegate>?
+    var delegate         : NORScannerDelegate?
     var filterUUID       : CBUUID?
-    var peripherals      : NSMutableArray?
-    var timer            : NSTimer?
+    var peripherals      : [NORScannedPeripheral]
+    var timer            : Timer?
     
     @IBOutlet weak var devicesTable: UITableView!
     @IBOutlet weak var emptyView: UIView!
-    @IBAction func cancelButtonTapped(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func cancelButtonTapped(_ sender: AnyObject) {
+        self.dismiss(animated: true, completion: nil)
     }
 
     @objc func timerFire() {
-        if peripherals?.count > 0 {
-            emptyView.hidden = true
+        if peripherals.count > 0 {
+            emptyView.isHidden = true
             devicesTable.reloadData()
         }
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        peripherals = []
+        super.init(coder: aDecoder)
+    }
+    
     func getRSSIImage(RSSI anRSSIValue: Int32) -> UIImage {
-        
         var image: UIImage
         
         if (anRSSIValue < -90) {
+<<<<<<< HEAD
             image = UIImage(named: "Signal_0")!//weak
         }else if (anRSSIValue < -70) {
+=======
+            image = UIImage(named: "Signal_0")!
+        } else if (anRSSIValue < -70) {
+>>>>>>> NordicSemiconductor/master
             image = UIImage(named: "Signal_1")!
-        }else if (anRSSIValue < -50) {
+        } else if (anRSSIValue < -50) {
             image = UIImage(named: "Signal_2")!
+<<<<<<< HEAD
         }else{
             image = UIImage(named: "Signal_3")!//strong
+=======
+        } else {
+            image = UIImage(named: "Signal_3")!
+>>>>>>> NordicSemiconductor/master
         }
         
         return image
     }
     
+<<<<<<< HEAD
     func getConnectedPeripherals() -> NSArray {
         var retreivedPeripherals : NSArray
         filterUUID = CBUUID.init(string: "FFCC")// Heat
 //        filterUUID = CBUUID.init(string: "FFF0")// OdunSmartShoe
+=======
+    func getConnectedPeripherals() -> [CBPeripheral] {
+        guard let bluetoothManager = bluetoothManager else {
+            return []
+        }
+        
+        var retreivedPeripherals : [CBPeripheral]
+
+>>>>>>> NordicSemiconductor/master
         if filterUUID == nil {
             let dfuServiceUUID       = CBUUID(string: dfuServiceUUIDString)
             let ancsServiceUUID      = CBUUID(string: ANCSServiceUUIDString)
-            retreivedPeripherals     = (bluetoothManager?.retrieveConnectedPeripheralsWithServices([dfuServiceUUID, ancsServiceUUID]))!
+            retreivedPeripherals     = bluetoothManager.retrieveConnectedPeripherals(withServices: [dfuServiceUUID, ancsServiceUUID])
         } else {
-            retreivedPeripherals     = (bluetoothManager?.retrieveConnectedPeripheralsWithServices([filterUUID!]))!
+            retreivedPeripherals     = bluetoothManager.retrieveConnectedPeripherals(withServices: [filterUUID!])
         }
 
         return retreivedPeripherals
     }
     
-    /*!
-     * @brief Starts scanning for peripherals with rscServiceUUID
-     * @param enable If YES, this method will enable scanning for bridge devices, if NO it will stop scanning
-     * @return true if success, false if Bluetooth Manager is not in CBCentralManagerStatePoweredOn state.
+    /**
+     * Starts scanning for peripherals with rscServiceUUID.
+     * - parameter enable: If YES, this method will enable scanning for bridge devices, if NO it will stop scanning
+     * - returns: true if success, false if Bluetooth Manager is not in CBCentralManagerStatePoweredOn state.
      */
-    func scanForPeripherals(enable:Bool) -> Bool {
-        guard bluetoothManager?.state == CBCentralManagerState.PoweredOn else {
+    func scanForPeripherals(_ enable:Bool) -> Bool {
+        guard bluetoothManager?.state == .poweredOn else {
             return false
         }
         
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             if enable == true {
-                let options: NSDictionary = NSDictionary(objects: [NSNumber(bool: true)], forKeys: [CBCentralManagerScanOptionAllowDuplicatesKey])
+                let options: NSDictionary = NSDictionary(objects: [NSNumber(value: true as Bool)], forKeys: [CBCentralManagerScanOptionAllowDuplicatesKey as NSCopying])
                 if self.filterUUID != nil {
-                    self.bluetoothManager?.scanForPeripheralsWithServices([self.filterUUID!], options: options as? [String : AnyObject])
+                    self.bluetoothManager?.scanForPeripherals(withServices: [self.filterUUID!], options: options as? [String : AnyObject])
                 } else {
-                    self.bluetoothManager?.scanForPeripheralsWithServices(nil, options: options as? [String : AnyObject])
+                    self.bluetoothManager?.scanForPeripherals(withServices: nil, options: options as? [String : AnyObject])
                 }
-                self.timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: #selector(self.timerFire), userInfo: nil, repeats: true)
+                self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(self.timerFire), userInfo: nil, repeats: true)
             } else {
                 self.timer?.invalidate()
                 self.timer = nil
@@ -98,44 +143,40 @@ class NORScannerViewController: UIViewController, CBCentralManagerDelegate, UITa
     //MARK: - ViewController Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        peripherals = NSMutableArray(capacity: 8)
         devicesTable.delegate = self
         devicesTable.dataSource = self
         
-        let activityIndicatorView              = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
+        let activityIndicatorView              = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
         activityIndicatorView.hidesWhenStopped = true
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicatorView)
         
         activityIndicatorView.startAnimating()
         
-        let centralQueue = dispatch_queue_create("no.nordicsemi.nRFToolBox", DISPATCH_QUEUE_SERIAL)
+        let centralQueue = DispatchQueue(label: "no.nordicsemi.nRFToolBox", attributes: [])
         bluetoothManager = CBCentralManager(delegate: self, queue: centralQueue)
     }
     
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        UIApplication.sharedApplication().setStatusBarStyle(UIStatusBarStyle.Default, animated: true)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: true)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         let success = self.scanForPeripherals(false)
         if !success {
             print("Bluetooth is powered off!")
         }
 
-        UIApplication.sharedApplication().setStatusBarStyle(UIStatusBarStyle.LightContent, animated: true)
+        UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.lightContent, animated: true)
         super.viewWillDisappear(animated)
     }
 
     //MARK: - UITableViewDataSource
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard peripherals != nil else {
-            return 0
-        }
-
-        return peripherals!.count
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return peripherals.count
     }
     
+<<<<<<< HEAD
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let aCell = tableView.dequeueReusableCellWithIdentifier("Cell")
         aCell?.textLabel?.numberOfLines = 0
@@ -144,21 +185,30 @@ class NORScannerViewController: UIViewController, CBCentralManagerDelegate, UITa
         let scannedPeripheral = peripherals?.objectAtIndex(indexPath.row) as! NORScannedPeripheral
         let uuid = scannedPeripheral.peripheral.identifier
         aCell?.textLabel?.text = "\(scannedPeripheral.name()) \(scannedPeripheral.RSSI) \(uuid)"
+=======
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let aCell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        
+        //Update cell content
+        let scannedPeripheral = peripherals[indexPath.row]
+        aCell.textLabel?.text = scannedPeripheral.name()
+>>>>>>> NordicSemiconductor/master
         if scannedPeripheral.isConnected == true {
-            aCell?.imageView?.image = UIImage(named: "Connected")
-        }else{
+            aCell.imageView!.image = UIImage(named: "Connected")
+        } else {
             let RSSIImage = self.getRSSIImage(RSSI: scannedPeripheral.RSSI)
-            aCell?.imageView?.image = RSSIImage
+            aCell.imageView!.image = RSSIImage
         }
         
-        return aCell!
+        return aCell
     }
 
     //MARK: - UITableViewDelegate
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        bluetoothManager?.stopScan()
-        self.dismissViewControllerAnimated(true, completion: nil)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        bluetoothManager!.stopScan()
+        self.dismiss(animated: true, completion: nil)
         // Call delegate method
+<<<<<<< HEAD
         let scannedPeripheral = peripherals?.objectAtIndex(indexPath.row) as! NORScannedPeripheral
         self.delegate?.centralManagerDidSelectPeripheral(withManager: bluetoothManager!, andPeripheral: scannedPeripheral.peripheral)
             
@@ -166,24 +216,36 @@ class NORScannerViewController: UIViewController, CBCentralManagerDelegate, UITa
         
         
 
+=======
+        let peripheral = peripherals[indexPath.row].peripheral
+        self.delegate?.centralManagerDidSelectPeripheral(withManager: bluetoothManager!, andPeripheral: peripheral)
+>>>>>>> NordicSemiconductor/master
     }
     
     //MARK: - CBCentralManagerDelgate
-    func centralManagerDidUpdateState(central: CBCentralManager) {
-        guard central.state == CBCentralManagerState.PoweredOn else {
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        guard central.state == .poweredOn else {
             print("Bluetooth is porewed off")
             return
         }
 
-        peripherals = NSMutableArray(array: self.getConnectedPeripherals())
+        let connectedPeripherals = self.getConnectedPeripherals()
+        var newScannedPeripherals: [NORScannedPeripheral] = []
+        connectedPeripherals.forEach { (connectedPeripheral: CBPeripheral) in
+            let connected = connectedPeripheral.state == .connected
+            let scannedPeripheral = NORScannedPeripheral(withPeripheral: connectedPeripheral, andIsConnected: connected )
+            newScannedPeripherals.append(scannedPeripheral)
+        }
+        peripherals = newScannedPeripherals
         let success = self.scanForPeripherals(true)
         if !success {
             print("Bluetooth is powered off!")
         }
     }
     
-    func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         // Scanner uses other queue to send events. We must edit UI in the main queue
+<<<<<<< HEAD
         if advertisementData[CBAdvertisementDataIsConnectable]?.boolValue == true {
             dispatch_async(dispatch_get_main_queue(), {
                 if (RSSI.intValue < -30 || RSSI.intValue > 0){
@@ -198,5 +260,16 @@ class NORScannerViewController: UIViewController, CBCentralManagerDelegate, UITa
                 }
             })
         }
+=======
+        DispatchQueue.main.async(execute: {
+            var sensor = NORScannedPeripheral(withPeripheral: peripheral, andRSSI: RSSI.int32Value, andIsConnected: false)
+            if ((self.peripherals.contains(sensor)) == false) {
+                self.peripherals.append(sensor)
+            }else{
+                sensor = self.peripherals[self.peripherals.index(of: sensor)!]
+                sensor.RSSI = RSSI.int32Value
+            }
+        })
+>>>>>>> NordicSemiconductor/master
     }
 }

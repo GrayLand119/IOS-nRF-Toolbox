@@ -9,19 +9,22 @@
 import UIKit
 
 enum NORServiceIds : UInt8 {
-    case UART       = 0
-    case RSC        = 1
-    case Proximity  = 2
-    case HTM        = 3
-    case HRM        = 4
-    case CSC        = 5
-    case BPM        = 6
-    case BGM        = 7
-    case CGM        = 8
+    case uart       = 0
+    case rsc        = 1
+    case proximity  = 2
+    case htm        = 3
+    case hrm        = 4
+    case csc        = 5
+    case bpm        = 6
+    case bgm        = 7
+    case cgm        = 8
+    case homekit    = 9
 }
 
 class NORAppUtilities: NSObject {
-    
+
+    static let iOSDFULibraryVersion = "3.0.6"
+
     static let uartHelpText = "This profile allows you to connect to a device that support Nordic's UART service. The service allows you to send and receive short messages of 20 bytes in total.\n\nThe main screen contains 9 programmable buttons. Use the Edit button to edit a command or an icon assigned to each button. Unused buttons may be hidden.\n\nTap the Show Log button to see the conversation or to send a custom message."
     
     static let rscHelpText  = "The RSC (Running Speed and Cadence) profile allows you to connect to your activity sensor. It reads speed and cadence values from the sensor and calculates trip distance if stride length is supported. Strides count is calculated by using cadence and the time."
@@ -41,15 +44,18 @@ class NORAppUtilities: NSObject {
     
     static let cgmHelpText = "The CGM (CONTINUOUS GLUCOSE MONITOR) profile allows you to connect to your continuous glucose sensor.\nTap the Start session button to begin reading records every minute (default frequency)"
     
-    static let helpText: [NORServiceIds: String] = [.UART: uartHelpText,
-                                                    .RSC: rscHelpText,
-                                                    .Proximity: proximityHelpText,
-                                                    .HTM: htmHelpText,
-                                                    .HRM: hrmHelpText,
-                                                    .CSC: cscHelpText,
-                                                    .BPM: bpmHelpText,
-                                                    .BGM: bgmHelpText,
-                                                    .CGM: cgmHelpText]
+    static let homeKitHelpText = "The HomeKit profile allows you to connect to your HomeKit compatible accessories.\nTap the Add Accessory button to browse new accessories or select an accessory from the ones already configured. you will be able to browse the services and characteristics for this accessory and put in OTA DFU mode."
+    
+    static let helpText: [NORServiceIds: String] = [.uart: uartHelpText,
+                                                    .rsc: rscHelpText,
+                                                    .proximity: proximityHelpText,
+                                                    .htm: htmHelpText,
+                                                    .hrm: hrmHelpText,
+                                                    .csc: cscHelpText,
+                                                    .bpm: bpmHelpText,
+                                                    .bgm: bgmHelpText,
+                                                    .cgm: cgmHelpText,
+                                                    .homekit: homeKitHelpText]
 
     static func showAlert(title aTitle : String, andMessage aMessage: String){
         let alertView = UIAlertView(title: aTitle, message: aMessage, delegate: nil, cancelButtonTitle: "OK")
@@ -61,14 +67,14 @@ class NORAppUtilities: NSObject {
         localNotification.alertAction   = "Show"
         localNotification.alertBody     = aMessage
         localNotification.hasAction     = false
-        localNotification.fireDate      = NSDate(timeIntervalSinceNow: 1)
-        localNotification.timeZone      = NSTimeZone.defaultTimeZone()
+        localNotification.fireDate      = Date(timeIntervalSinceNow: 1)
+        localNotification.timeZone      = TimeZone.current
         localNotification.soundName     = UILocalNotificationDefaultSoundName
     }
     
     static func isApplicationInactive() -> Bool {
-        let appState = UIApplication.sharedApplication().applicationState
-        return appState != UIApplicationState.Active
+        let appState = UIApplication.shared.applicationState
+        return appState != UIApplicationState.active
     }
     
     static func getHelpTextForService(service aServiceId: NORServiceIds) -> String {

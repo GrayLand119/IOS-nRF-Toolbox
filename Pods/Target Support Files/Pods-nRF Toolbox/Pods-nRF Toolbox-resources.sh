@@ -8,11 +8,31 @@ RESOURCES_TO_COPY=${PODS_ROOT}/resources-to-copy-${TARGETNAME}.txt
 
 XCASSET_FILES=()
 
+<<<<<<< HEAD
 realpath() {
   DIRECTORY="$(cd "${1%/*}" && pwd)"
   FILENAME="${1##*/}"
   echo "$DIRECTORY/$FILENAME"
 }
+=======
+case "${TARGETED_DEVICE_FAMILY}" in
+  1,2)
+    TARGET_DEVICE_ARGS="--target-device ipad --target-device iphone"
+    ;;
+  1)
+    TARGET_DEVICE_ARGS="--target-device iphone"
+    ;;
+  2)
+    TARGET_DEVICE_ARGS="--target-device ipad"
+    ;;
+  3)
+    TARGET_DEVICE_ARGS="--target-device tv"
+    ;;
+  *)
+    TARGET_DEVICE_ARGS="--target-device mac"
+    ;;
+esac
+>>>>>>> NordicSemiconductor/master
 
 install_resource()
 {
@@ -44,7 +64,11 @@ install_resource()
       xcrun mapc "${PODS_ROOT}/$1" "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename "$1" .xcmappingmodel`.cdm"
       ;;
     *.xcassets)
+<<<<<<< HEAD
       ABSOLUTE_XCASSET_FILE=$(realpath "${PODS_ROOT}/$1")
+=======
+      ABSOLUTE_XCASSET_FILE="$RESOURCE_PATH"
+>>>>>>> NordicSemiconductor/master
       XCASSET_FILES+=("$ABSOLUTE_XCASSET_FILE")
       ;;
     /*)
@@ -86,7 +110,7 @@ then
   # Find all other xcassets (this unfortunately includes those of path pods and other targets).
   OTHER_XCASSETS=$(find "$PWD" -iname "*.xcassets" -type d)
   while read line; do
-    if [[ $line != "`realpath $PODS_ROOT`*" ]]; then
+    if [[ $line != "${PODS_ROOT}*" ]]; then
       XCASSET_FILES+=("$line")
     fi
   done <<<"$OTHER_XCASSETS"

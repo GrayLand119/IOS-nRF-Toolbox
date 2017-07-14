@@ -7,12 +7,12 @@
 //
 
 class Manifest: NSObject {
-    var application:ManifestFirmwareInfo?
-    var softdevice:ManifestFirmwareInfo?
-    var bootloader:ManifestFirmwareInfo?
-    var softdeviceBootloader:SoftdeviceBootloaderInfo?
+    var application: ManifestFirmwareInfo?
+    var softdevice:  ManifestFirmwareInfo?
+    var bootloader:  ManifestFirmwareInfo?
+    var softdeviceBootloader: SoftdeviceBootloaderInfo?
     
-    var valid:Bool {
+    var valid: Bool {
         // The manifest.json file may specify only:
         // 1. a softdevice, a bootloader, or both combined (with, or without an app)
         // 2. only the app
@@ -28,8 +28,8 @@ class Manifest: NSObject {
     
     init(withJsonString aString : String) {
         do {
-            let data = aString.dataUsingEncoding(NSUTF8StringEncoding)
-            let aDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments) as! Dictionary<String, AnyObject>
+            let data = aString.data(using: String.Encoding.utf8)
+            let aDictionary = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! Dictionary<String, AnyObject>
             
             let mainObject = aDictionary["manifest"] as! Dictionary<String, AnyObject>
             if mainObject.keys.contains("application") {
@@ -51,7 +51,6 @@ class Manifest: NSObject {
 
         } catch {
             print("an error occured while parsing manifest.json \(error)")
-        }
-        
+        }        
     }
 }

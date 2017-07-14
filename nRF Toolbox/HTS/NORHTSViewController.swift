@@ -14,10 +14,10 @@ class NORHTSViewController: NORBaseViewController, CBCentralManagerDelegate, CBP
     //MARK: - ViewController properties
     var bluetoothManager                 : CBCentralManager?
     var connectedPeripheral              : CBPeripheral?
-    var htsServiceUUID                   : CBUUID?
-    var htsMeasurementCharacteristicUUID : CBUUID?
-    var batteryServiceUUID               : CBUUID?
-    var batteryLevelCharacteristicUUID   : CBUUID?
+    var htsServiceUUID                   : CBUUID
+    var htsMeasurementCharacteristicUUID : CBUUID
+    var batteryServiceUUID               : CBUUID
+    var batteryLevelCharacteristicUUID   : CBUUID
     var temperatureValueFahrenheit       : Bool?
     var temperatureValue                 : Double?
 
@@ -33,54 +33,54 @@ class NORHTSViewController: NORBaseViewController, CBCentralManagerDelegate, CBP
     @IBOutlet weak var degreeControl: UISegmentedControl!
    
     //MARK: - ViewControllerActions
-    @IBAction func aboutButtonTapped(sender: AnyObject) {
-        self.showAbout(message: NORAppUtilities.getHelpTextForService(service: .HTM))
+    @IBAction func aboutButtonTapped(_ sender: AnyObject) {
+        self.showAbout(message: NORAppUtilities.getHelpTextForService(service: .htm))
     }
     
-    @IBAction func connectionButtonTapped(sender: AnyObject) {
+    @IBAction func connectionButtonTapped(_ sender: AnyObject) {
         if connectedPeripheral != nil {
             bluetoothManager?.cancelPeripheralConnection(connectedPeripheral!)
         }
     }
     
-    @IBAction func degreeHasChanged(sender: AnyObject) {
+    @IBAction func degreeHasChanged(_ sender: AnyObject) {
         let control = sender as! UISegmentedControl
-        if (control.selectedSegmentIndex == 0)
-        {
+        if (control.selectedSegmentIndex == 0) {
             // Celsius
             temperatureValueFahrenheit = false
-            NSUserDefaults.standardUserDefaults().setBool(false, forKey: "fahrenheit")
+            UserDefaults.standard.set(false, forKey: "fahrenheit")
             self.temperatureUnit.text = "°C"
-            temperatureValue = (temperatureValue! - 32.0) * 5.0 / 9.0
-        }
-        else
-        {
+            if temperatureValue != nil {
+                temperatureValue = (temperatureValue! - 32.0) * 5.0 / 9.0
+            }
+        } else {
             // Fahrenheit
             temperatureValueFahrenheit = true
-            NSUserDefaults.standardUserDefaults().setBool(true, forKey: "fahrenheit")
+            UserDefaults.standard.set(true, forKey: "fahrenheit")
             self.temperatureUnit.text = "°F"
-            temperatureValue = temperatureValue! * 9.0 / 5.0 + 32.0;
+            if temperatureValue != nil {
+                temperatureValue = temperatureValue! * 9.0 / 5.0 + 32.0
+            }
         }
         
-        NSUserDefaults.standardUserDefaults().synchronize()
+        UserDefaults.standard.synchronize()
         
-        if connectedPeripheral != nil {
+        if temperatureValue != nil {
             self.temperature.text = String(format:"%.2f", temperatureValue!)
         }
-
     }
 
     //MARK: - Segue handling
-    override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         // The 'scan' seque will be performed only if connectedPeripheral == nil (if we are not connected already).
         return identifier != "scan" || connectedPeripheral == nil
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "scan" {
             // Set this contoller as scanner delegate
-            let navigationController = segue.destinationViewController as! UINavigationController
-            let scannerController    = navigationController.childViewControllerForStatusBarHidden() as! NORScannerViewController
+            let navigationController = segue.destination as! UINavigationController
+            let scannerController    = navigationController.childViewControllerForStatusBarHidden as! NORScannerViewController
             scannerController.filterUUID = htsServiceUUID
             scannerController.delegate = self
         }
@@ -88,83 +88,91 @@ class NORHTSViewController: NORBaseViewController, CBCentralManagerDelegate, CBP
 
     //MARK: - UIViewControllerDelegate
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
         // Custom initialization
         htsServiceUUID                   = CBUUID(string: NORServiceIdentifiers.htsServiceUUIDString)
         htsMeasurementCharacteristicUUID = CBUUID(string: NORServiceIdentifiers.htsMeasurementCharacteristicUUIDString)
         batteryServiceUUID               = CBUUID(string: NORServiceIdentifiers.batteryServiceUUIDString)
         batteryLevelCharacteristicUUID   = CBUUID(string: NORServiceIdentifiers.batteryLevelCharacteristicUUIDString)
+        super.init(coder: aDecoder)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.verticalLabel.transform = CGAffineTransformRotate(CGAffineTransformMakeTranslation(-185.0, 0.0), CGFloat(-M_PI_2))
+        self.verticalLabel.transform = CGAffineTransform(translationX: -(verticalLabel.frame.width/2) + (verticalLabel.frame.height / 2), y: 0.0).rotated(by: CGFloat(-M_PI_2))
         self.updateUnits()
     }
 
     //MARK: - CBPeripheralDelegate
-    func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
-        guard error == nil else
-        {
-            print("Error discovering service: %@", error?.localizedDescription)
-            bluetoothManager?.cancelPeripheralConnection(connectedPeripheral!)
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        guard error == nil else {
+            print("An error occured while discovering services: \(error!.localizedDescription)")
+            bluetoothManager!.cancelPeripheralConnection(peripheral)
             return;
         }
         
         for aService : CBService in peripheral.services! {
             // Discovers the characteristics for a given service
-            if aService.UUID == htsServiceUUID {
-                connectedPeripheral?.discoverCharacteristics([htsMeasurementCharacteristicUUID!], forService: aService)
-            }else if aService.UUID == batteryServiceUUID {
-                connectedPeripheral?.discoverCharacteristics([batteryLevelCharacteristicUUID!], forService: aService)
+            if aService.uuid == htsServiceUUID {
+                peripheral.discoverCharacteristics([htsMeasurementCharacteristicUUID], for: aService)
+            }else if aService.uuid == batteryServiceUUID {
+               peripheral.discoverCharacteristics([batteryLevelCharacteristicUUID], for: aService)
             }
         }
     }
     
-    func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
-
-        // Characteristics for one of those services has been found
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+        guard error == nil else {
+            print("Error occurred while discovering characteristic: \(error!.localizedDescription)")
+            bluetoothManager!.cancelPeripheralConnection(peripheral)
+            return
+        }
         
-        if service.UUID == htsServiceUUID {
+        // Characteristics for one of those services has been found
+        if service.uuid == htsServiceUUID {
             for aCharacteristic : CBCharacteristic in service.characteristics! {
-                if aCharacteristic.UUID == htsMeasurementCharacteristicUUID {
+                if aCharacteristic.uuid == htsMeasurementCharacteristicUUID {
                     // Enable notification on data characteristic
-                    peripheral.setNotifyValue(true, forCharacteristic: aCharacteristic)
+                    peripheral.setNotifyValue(true, for: aCharacteristic)
                     break
                 }
             }
-        } else if service.UUID == batteryServiceUUID {
+        } else if service.uuid == batteryServiceUUID {
             for aCharacteristic : CBCharacteristic in service.characteristics! {
-                if aCharacteristic.UUID == batteryLevelCharacteristicUUID {
-                    peripheral.readValueForCharacteristic(aCharacteristic)
+                if aCharacteristic.uuid == batteryLevelCharacteristicUUID {
+                    peripheral.readValue(for: aCharacteristic)
                 }
             }
         }
     }
     
-    func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+        guard error == nil else {
+            print("Error occurred while updating characteristic value: \(error!.localizedDescription)")
+            return
+        }
+        
         // Scanner uses other queue to send events. We must edit UI in the main queue
-        dispatch_async(dispatch_get_main_queue(), {
+        DispatchQueue.main.async(execute: {
             // Decode the characteristic data
             let data = characteristic.value
-            var array = UnsafeMutablePointer<UInt8>((data?.bytes)!)
+            var array = UnsafeMutablePointer<UInt8>(OpaquePointer(((data as NSData?)?.bytes)!))
             
-            if characteristic.UUID == self.batteryLevelCharacteristicUUID {
+            if characteristic.uuid == self.batteryLevelCharacteristicUUID {
                 let batteryLevel = NORCharacteristicReader.readUInt8Value(ptr: &array)
                 
-                let text = String(format: "%d%%", batteryLevel)
-                self.battery.setTitle(text, forState: UIControlState.Disabled)
+                let text = "\(batteryLevel)%"
+                self.battery.setTitle(text, for: UIControlState.disabled)
                 
                 if self.battery.tag == 0 {
                     // If battery level notifications are available, enable them
-                    if characteristic.properties.rawValue & CBCharacteristicProperties.Notify.rawValue > 0 {
+                    if characteristic.properties.rawValue & CBCharacteristicProperties.notify.rawValue > 0 {
                         self.battery.tag = 1; // mark that we have enabled notifications
                         
                         // Enable notification on data characteristic
-                        peripheral.setNotifyValue(true, forCharacteristic: characteristic)
+                        peripheral.setNotifyValue(true, for: characteristic)
                     }
                 }
-            }else if characteristic.UUID == self.htsMeasurementCharacteristicUUID {
+            } else if characteristic.uuid == self.htsMeasurementCharacteristicUUID {
                 let flags = NORCharacteristicReader.readUInt8Value(ptr: &array)
                 let tempInFahrenheit : Bool = (flags & 0x01) > 0
                 let timestampPresent : Bool = (flags & 0x02) > 0
@@ -183,10 +191,10 @@ class NORHTSViewController: NORBaseViewController, CBCentralManagerDelegate, CBP
                 
                 if timestampPresent == true {
                     let date = NORCharacteristicReader.readDateTime(ptr: &array)
-                    let dateFormat = NSDateFormatter()
+                    let dateFormat = DateFormatter()
                     dateFormat.dateFormat = "dd.MM.yyyy, hh:mm"
                     
-                    let dateFormattedString = dateFormat.stringFromDate(date)
+                    let dateFormattedString = dateFormat.string(from: date)
                     self.timestamp.text = dateFormattedString
                 } else {
                     self.timestamp.text = "Date n/a"
@@ -231,14 +239,11 @@ class NORHTSViewController: NORBaseViewController, CBCentralManagerDelegate, CBP
                         break;
                     }
                     self.type.text = String(format: "Location: %@", location)
-                }
-                else
-                {
+                } else {
                     self.type.text = "Location: n/a";
                 }
                 
-                if  NORAppUtilities.isApplicationInactive()
-                {
+                if  NORAppUtilities.isApplicationInactive() {
                     var message : String = ""
                     if (self.temperatureValueFahrenheit == true) {
                         message = String(format:"New temperature reading: %.2f°F", tempValue)
@@ -252,47 +257,51 @@ class NORHTSViewController: NORBaseViewController, CBCentralManagerDelegate, CBP
             })
     }
     //MARK: - CBCentralManagerDelegate
-    func centralManagerDidUpdateState(central: CBCentralManager) {
-        if central.state != CBCentralManagerState.PoweredOn {
-            print("Bluetooth not porwerd on!")
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        if central.state == .poweredOff {
+            print("Bluetooth powered off")
+        } else {
+            print("Bluetooth powered on")
         }
     }
-    func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+    
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         // Scanner uses other queue to send events. We must edit UI in the main queue
-        dispatch_async(dispatch_get_main_queue(), {
+        DispatchQueue.main.async(execute: {
             self.deviceName.text = peripheral.name
-            self.connectionButon.setTitle("DISCONNECT", forState: UIControlState.Normal)
+            self.connectionButon.setTitle("DISCONNECT", for: UIControlState())
         })
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.didEnterBackrgoundCallback), name: UIApplicationDidEnterBackgroundNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.didBecomeActiveCallback), name: UIApplicationDidBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.appDidEnterBackrgoundCallback), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.appDidBecomeActiveCallback), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
 
         // Peripheral has connected. Discover required services
         connectedPeripheral = peripheral;
-        peripheral.discoverServices([htsServiceUUID!, batteryServiceUUID!])
+        peripheral.discoverServices([htsServiceUUID, batteryServiceUUID])
     }
     
-    func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         // Scanner uses other queue to send events. We must edit UI in the main queue
-        dispatch_async(dispatch_get_main_queue(), {
+        DispatchQueue.main.async(execute: {
             NORAppUtilities.showAlert(title: "Error", andMessage: "Connecting to peripheral failed. Try again")
-            self.connectionButon.setTitle("CONNECT", forState: UIControlState.Normal)
+            self.connectionButon.setTitle("CONNECT", for: UIControlState())
             self.connectedPeripheral = nil
             self.clearUI()
         })
     }
     
-    func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         // Scanner uses other queue to send events. We must edit UI in the main queue
-        dispatch_async(dispatch_get_main_queue(), {
-            self.connectionButon.setTitle("CONNECT", forState: UIControlState.Normal)
+        DispatchQueue.main.async(execute: {
+            self.connectionButon.setTitle("CONNECT", for: UIControlState())
             if NORAppUtilities.isApplicationInactive() {
-                NORAppUtilities.showBackgroundNotification(message: "Peripheral \(peripheral.name) is disconnected")
+                let name = peripheral.name ?? "Peripheral"
+                NORAppUtilities.showBackgroundNotification(message: "\(name) is disconnected.")
             }
             self.connectedPeripheral = nil
             self.clearUI()
-            NSNotificationCenter.defaultCenter().removeObserver(self, name: UIApplicationDidBecomeActiveNotification, object: nil)
-            NSNotificationCenter.defaultCenter().removeObserver(self, name: UIApplicationDidEnterBackgroundNotification, object: nil)
+            NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+            NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         })
     }
     
@@ -300,39 +309,40 @@ class NORHTSViewController: NORBaseViewController, CBCentralManagerDelegate, CBP
     func centralManagerDidSelectPeripheral(withManager aManager: CBCentralManager, andPeripheral aPeripheral: CBPeripheral) {
         // We may not use more than one Central Manager instance. Let's just take the one returned from Scanner View Controller
         bluetoothManager = aManager
-        bluetoothManager?.delegate = self
+        bluetoothManager!.delegate = self
         
         // The sensor has been selected, connect to it
         aPeripheral.delegate = self
-        let options = [CBConnectPeripheralOptionNotifyOnNotificationKey : NSNumber(bool:true)]
-        bluetoothManager?.connectPeripheral(aPeripheral, options: options)
+        let options = [CBConnectPeripheralOptionNotifyOnNotificationKey : NSNumber(value: true as Bool)]
+        bluetoothManager!.connect(aPeripheral, options: options)
     }
     
     //MARK: - NORHTSViewController implementation
     func updateUnits() {
-        temperatureValueFahrenheit = NSUserDefaults.standardUserDefaults().boolForKey("fahrenheit")
+        temperatureValueFahrenheit = UserDefaults.standard.bool(forKey: "fahrenheit")
         if temperatureValueFahrenheit == true {
             degreeControl.selectedSegmentIndex = 1
-            self.temperature.text = "°F"
+            self.temperatureUnit.text = "°F"
         } else {
             degreeControl.selectedSegmentIndex = 0
-            self.temperature.text = "°C"
+            self.temperatureUnit.text = "°C"
         }
     }
     
-    func didEnterBackrgoundCallback() {
-        NORAppUtilities.showBackgroundNotification(message: "You are still connected to \(connectedPeripheral?.name) peripheral. It will collect data also in background.")
+    func appDidEnterBackrgoundCallback() {
+        let name = connectedPeripheral?.name ?? "peripheral"
+        NORAppUtilities.showBackgroundNotification(message: "You are still connected to \(name). It will collect data also in background.")
     }
     
-    func didBecomeActiveCallback() {
-        UIApplication.sharedApplication().cancelAllLocalNotifications()
+    func appDidBecomeActiveCallback() {
+        UIApplication.shared.cancelAllLocalNotifications()
         self.updateUnits()
     }
     
     func clearUI() {
         deviceName.text = "DEFAULT HTM"
         battery.tag = 0
-        battery.setTitle("n/a", forState: UIControlState.Disabled)
+        battery.setTitle("n/a", for: UIControlState.disabled)
         self.temperature.text = "-"
         self.timestamp.text = ""
         self.type.text = ""

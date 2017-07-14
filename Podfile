@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 target 'nRF Toolbox' do
   
   #pod 'CocoaLumberjack', '~> 2.3.0'
@@ -35,4 +36,12 @@ target 'nRF Toolbox' do
 #   inherit! :search_paths
 # end
   
+=======
+use_frameworks!
+target "nRF Toolbox" do
+    pod 'iOSDFULibrary', '~> 3.0'
+    pod 'EVReflection', '~> 4.5'
+    pod 'SWRevealViewController', '~> 2.3'
+    pod 'CorePlot', '~> 2.2'
+>>>>>>> NordicSemiconductor/master
 end

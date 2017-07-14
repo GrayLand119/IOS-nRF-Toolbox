@@ -4,5 +4,10 @@ LIBRARY_SEARCH_PATHS = $(SRCROOT)/Zip/Zip/
 OTHER_LDFLAGS = -l"z"
 OTHER_SWIFT_FLAGS = $(inherited) "-D" "COCOAPODS"
 PODS_ROOT = ${SRCROOT}
+<<<<<<< HEAD
+=======
+PODS_TARGET_SRCROOT = ${PODS_ROOT}/Zip
+PRODUCT_BUNDLE_IDENTIFIER = org.cocoapods.${PRODUCT_NAME:rfc1034identifier}
+>>>>>>> NordicSemiconductor/master
 SKIP_INSTALL = YES
 SWIFT_INCLUDE_PATHS = $(SRCROOT)/Zip/Zip/minizip/**

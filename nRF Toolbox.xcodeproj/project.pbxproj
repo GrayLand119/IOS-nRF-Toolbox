@@ -33,6 +33,7 @@
 		304299241CE6114000E1D2AB /* NORTutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304299231CE6114000E1D2AB /* NORTutorialViewController.swift */; };
 		3042993C1CE6154100E1D2AB /* NORBaseRevealViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304299391CE6154100E1D2AB /* NORBaseRevealViewController.swift */; };
 		3042993D1CE6154100E1D2AB /* NORBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3042993A1CE6154100E1D2AB /* NORBaseViewController.swift */; };
+		30499E4B1CE4667800E0993B /* NORDFUConstantsUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30499E4A1CE4667800E0993B /* NORDFUConstantsUtility.swift */; };
 		30499E4D1CE4687300E0993B /* NORFileTypeSelectionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30499E4C1CE4687300E0993B /* NORFileTypeSelectionDelegate.swift */; };
 		30499E4F1CE4688700E0993B /* NORFileTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30499E4E1CE4688700E0993B /* NORFileTypeViewController.swift */; };
 		30499E511CE471C500E0993B /* NORDFUViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30499E501CE471C500E0993B /* NORDFUViewController.swift */; };
@@ -44,7 +45,6 @@
 		304D58FD1CE34FC600148271 /* NORLogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304D58FC1CE34FC600148271 /* NORLogViewController.swift */; };
 		304D58FF1CE3521900148271 /* NORLogItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304D58FE1CE3521900148271 /* NORLogItem.swift */; };
 		304D59011CE352B300148271 /* NORLogItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304D59001CE352B300148271 /* NORLogItemTableViewCell.swift */; };
-		30532D5B1D7EC25100208CC5 /* NORDFUConstantsUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30532D5A1D7EC25100208CC5 /* NORDFUConstantsUtility.swift */; };
 		3069A1D71CDC788A003869EA /* NORBluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3069A1D61CDC788A003869EA /* NORBluetoothManager.swift */; };
 		306ECD621CE61A3600E48BBD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306ECD611CE61A3600E48BBD /* AppDelegate.swift */; };
 		3080C4711CE06D0E009C2D8C /* NORCSCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3080C4701CE06D0E009C2D8C /* NORCSCViewController.swift */; };
@@ -52,6 +52,12 @@
 		308EE1781CE0CBF700F2A854 /* NORHTSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308EE1771CE0CBF700F2A854 /* NORHTSViewController.swift */; };
 		30921FD31CD0E7A5009CBDDE /* NORNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30921FD21CD0E7A5009CBDDE /* NORNavigationController.swift */; };
 		30921FD51CD0EB55009CBDDE /* NORMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30921FD41CD0EB55009CBDDE /* NORMainViewController.swift */; };
+		309F08651E6D6A5500B7546A /* NORHKViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309F08641E6D6A5500B7546A /* NORHKViewController.swift */; };
+		309F08681E6D706B00B7546A /* HomeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 309F08671E6D706B00B7546A /* HomeKit.framework */; };
+		309F086A1E6D9EAA00B7546A /* NORHKHomeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309F08691E6D9EAA00B7546A /* NORHKHomeStore.swift */; };
+		309F086C1E6EA0F800B7546A /* NORHKScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309F086B1E6EA0F800B7546A /* NORHKScannerViewController.swift */; };
+		309F086E1E6ED44F00B7546A /* NORHKScannerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309F086D1E6ED44F00B7546A /* NORHKScannerDelegate.swift */; };
+		309F08701E6FF1F900B7546A /* NORHKAccessoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309F086F1E6FF1F900B7546A /* NORHKAccessoryViewController.swift */; };
 		30A114561CD2367C000F0F02 /* NORScannedPeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30A114551CD2367C000F0F02 /* NORScannedPeripheral.swift */; };
 		30A1145A1CD2426B000F0F02 /* NORScannerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30A114591CD2426B000F0F02 /* NORScannerDelegate.swift */; };
 		30A1145C1CD24611000F0F02 /* NORScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30A1145B1CD24611000F0F02 /* NORScannerViewController.swift */; };
@@ -75,10 +81,14 @@
 		52BDCB191C3FD31F00E2680F /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52BDCB181C3FD31F00E2680F /* Accelerate.framework */; };
 		52BDCBBE1C3FD86900E2680F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52BDCBBD1C3FD86900E2680F /* QuartzCore.framework */; };
 		52BDCBC61C47C2C300E2680F /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52BDCBC51C47C2C300E2680F /* Launch Screen.storyboard */; };
-		679FCDC81084BF79BA97DBE0 /* Pods_nRF_ToolboxTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B489CB8F89866477A46903E /* Pods_nRF_ToolboxTests.framework */; };
+		52D9BC9E1DD0CB760030E824 /* NORData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D9BC9D1DD0CB760030E824 /* NORData.swift */; };
 		7E1B422918A8DF4D006BA1BC /* high.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7E1B422818A8DF4D006BA1BC /* high.mp3 */; };
+<<<<<<< HEAD
 		980EE6BE462CDC2184B781DD /* Pods_nRF_Toolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 210BB56BD40BE6023AD766CE /* Pods_nRF_Toolbox.framework */; };
 		C302AFE31DC8A65500D2EF08 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C302AFE21DC8A65500D2EF08 /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+=======
+		9989D1FF5018421BE4160C50 /* Pods_nRF_Toolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24D84A6CFE99FD917A7222B7 /* Pods_nRF_Toolbox.framework */; };
+>>>>>>> NordicSemiconductor/master
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,9 +115,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		10485F7219578AE764CD532A /* Pods-nRF Toolbox.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRF Toolbox.debug.xcconfig"; path = "Pods/Target Support Files/Pods-nRF Toolbox/Pods-nRF Toolbox.debug.xcconfig"; sourceTree = "<group>"; };
-		210BB56BD40BE6023AD766CE /* Pods_nRF_Toolbox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRF_Toolbox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		211C8B857C070A24826730D2 /* Pods-nRF ToolboxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRF ToolboxTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-nRF ToolboxTests/Pods-nRF ToolboxTests.debug.xcconfig"; sourceTree = "<group>"; };
+		0A455719E4780A53A451F09C /* Pods-nRF Toolbox.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRF Toolbox.debug.xcconfig"; path = "Pods/Target Support Files/Pods-nRF Toolbox/Pods-nRF Toolbox.debug.xcconfig"; sourceTree = "<group>"; };
+		24D84A6CFE99FD917A7222B7 /* Pods_nRF_Toolbox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRF_Toolbox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		28F7349095038A3F55F27F8C /* Pods-nRF Toolbox.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRF Toolbox.release.xcconfig"; path = "Pods/Target Support Files/Pods-nRF Toolbox/Pods-nRF Toolbox.release.xcconfig"; sourceTree = "<group>"; };
 		3000B2101CE317D900F64CEE /* NORUARTRevealViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORUARTRevealViewController.swift; sourceTree = "<group>"; };
 		3000B2121CE3195E00F64CEE /* NOREditPopupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NOREditPopupViewController.swift; sourceTree = "<group>"; };
 		3000B2141CE32A9200F64CEE /* NORUARTViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORUARTViewController.swift; sourceTree = "<group>"; };
@@ -133,6 +143,7 @@
 		304299231CE6114000E1D2AB /* NORTutorialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORTutorialViewController.swift; sourceTree = "<group>"; };
 		304299391CE6154100E1D2AB /* NORBaseRevealViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORBaseRevealViewController.swift; sourceTree = "<group>"; };
 		3042993A1CE6154100E1D2AB /* NORBaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORBaseViewController.swift; sourceTree = "<group>"; };
+		30499E4A1CE4667800E0993B /* NORDFUConstantsUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORDFUConstantsUtility.swift; sourceTree = "<group>"; };
 		30499E4C1CE4687300E0993B /* NORFileTypeSelectionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NORFileTypeSelectionDelegate.swift; path = FileSelection/NORFileTypeSelectionDelegate.swift; sourceTree = "<group>"; };
 		30499E4E1CE4688700E0993B /* NORFileTypeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NORFileTypeViewController.swift; path = FileSelection/NORFileTypeViewController.swift; sourceTree = "<group>"; };
 		30499E501CE471C500E0993B /* NORDFUViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORDFUViewController.swift; sourceTree = "<group>"; };
@@ -144,7 +155,6 @@
 		304D58FC1CE34FC600148271 /* NORLogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORLogViewController.swift; sourceTree = "<group>"; };
 		304D58FE1CE3521900148271 /* NORLogItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORLogItem.swift; sourceTree = "<group>"; };
 		304D59001CE352B300148271 /* NORLogItemTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORLogItemTableViewCell.swift; sourceTree = "<group>"; };
-		30532D5A1D7EC25100208CC5 /* NORDFUConstantsUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORDFUConstantsUtility.swift; sourceTree = "<group>"; };
 		3069A1D61CDC788A003869EA /* NORBluetoothManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORBluetoothManager.swift; sourceTree = "<group>"; };
 		306ECD611CE61A3600E48BBD /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3080C4701CE06D0E009C2D8C /* NORCSCViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORCSCViewController.swift; sourceTree = "<group>"; };
@@ -152,6 +162,13 @@
 		308EE1771CE0CBF700F2A854 /* NORHTSViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORHTSViewController.swift; sourceTree = "<group>"; };
 		30921FD21CD0E7A5009CBDDE /* NORNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORNavigationController.swift; sourceTree = "<group>"; };
 		30921FD41CD0EB55009CBDDE /* NORMainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORMainViewController.swift; sourceTree = "<group>"; };
+		309F08641E6D6A5500B7546A /* NORHKViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORHKViewController.swift; sourceTree = "<group>"; };
+		309F08661E6D706B00B7546A /* nRF Toolbox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "nRF Toolbox.entitlements"; sourceTree = "<group>"; };
+		309F08671E6D706B00B7546A /* HomeKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HomeKit.framework; path = System/Library/Frameworks/HomeKit.framework; sourceTree = SDKROOT; };
+		309F08691E6D9EAA00B7546A /* NORHKHomeStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORHKHomeStore.swift; sourceTree = "<group>"; };
+		309F086B1E6EA0F800B7546A /* NORHKScannerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORHKScannerViewController.swift; sourceTree = "<group>"; };
+		309F086D1E6ED44F00B7546A /* NORHKScannerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORHKScannerDelegate.swift; sourceTree = "<group>"; };
+		309F086F1E6FF1F900B7546A /* NORHKAccessoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORHKAccessoryViewController.swift; sourceTree = "<group>"; };
 		30A114551CD2367C000F0F02 /* NORScannedPeripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORScannedPeripheral.swift; sourceTree = "<group>"; };
 		30A114591CD2426B000F0F02 /* NORScannerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORScannerDelegate.swift; sourceTree = "<group>"; };
 		30A1145B1CD24611000F0F02 /* NORScannerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORScannerViewController.swift; sourceTree = "<group>"; };
@@ -178,13 +195,16 @@
 		52BDCB181C3FD31F00E2680F /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		52BDCBBD1C3FD86900E2680F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		52BDCBC51C47C2C300E2680F /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		52D9BC9D1DD0CB760030E824 /* NORData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NORData.swift; sourceTree = "<group>"; };
 		7E1B422818A8DF4D006BA1BC /* high.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = high.mp3; sourceTree = "<group>"; };
 		7E6ED10A196ED482008010B6 /* firmwares */ = {isa = PBXFileReference; lastKnownFileType = folder; path = firmwares; sourceTree = "<group>"; };
-		80046CCC58A5D00193AE05B1 /* Pods-nRF Toolbox.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRF Toolbox.release.xcconfig"; path = "Pods/Target Support Files/Pods-nRF Toolbox/Pods-nRF Toolbox.release.xcconfig"; sourceTree = "<group>"; };
 		89CF4D2BA242FBAD9F6C46E9 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+<<<<<<< HEAD
 		9B489CB8F89866477A46903E /* Pods_nRF_ToolboxTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRF_ToolboxTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C302AFE21DC8A65500D2EF08 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = "../../Library/Developer/Xcode/DerivedData/nRF_Toolbox-fwwnqcnvfepdekhfosyudibnrxcs/Build/Products/Debug-iphoneos/CocoaLumberjack.framework"; sourceTree = "<group>"; };
 		DC05EDAED7947668C33A2E7D /* Pods-nRF ToolboxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRF ToolboxTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-nRF ToolboxTests/Pods-nRF ToolboxTests.release.xcconfig"; sourceTree = "<group>"; };
+=======
+>>>>>>> NordicSemiconductor/master
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,11 +216,12 @@
 				522636371C60FFB00054A550 /* libz.tbd in Frameworks */,
 				52BDCB191C3FD31F00E2680F /* Accelerate.framework in Frameworks */,
 				52BDCBBE1C3FD86900E2680F /* QuartzCore.framework in Frameworks */,
+				309F08681E6D706B00B7546A /* HomeKit.framework in Frameworks */,
 				5217F41B1859EEF400F2D5BB /* CoreBluetooth.framework in Frameworks */,
 				5217F3E81859EE0000F2D5BB /* CoreGraphics.framework in Frameworks */,
 				5217F3EA1859EE0000F2D5BB /* UIKit.framework in Frameworks */,
 				5217F3E61859EE0000F2D5BB /* Foundation.framework in Frameworks */,
-				980EE6BE462CDC2184B781DD /* Pods_nRF_Toolbox.framework in Frameworks */,
+				9989D1FF5018421BE4160C50 /* Pods_nRF_Toolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -210,13 +231,21 @@
 			files = (
 				5217F4071859EE0000F2D5BB /* UIKit.framework in Frameworks */,
 				5217F4061859EE0000F2D5BB /* Foundation.framework in Frameworks */,
-				679FCDC81084BF79BA97DBE0 /* Pods_nRF_ToolboxTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		022A9DC491EC95659788F163 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0A455719E4780A53A451F09C /* Pods-nRF Toolbox.debug.xcconfig */,
+				28F7349095038A3F55F27F8C /* Pods-nRF Toolbox.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		3001EBB21D1BE1FB008C5C37 /* ContinuousGlucoseMonitoring */ = {
 			isa = PBXGroup;
 			children = (
@@ -254,21 +283,22 @@
 			path = BluetoothManager;
 			sourceTree = "<group>";
 		};
-		33A64560CF9923BFDA33479F /* Pods */ = {
+		309F08631E6D6A4300B7546A /* HomeKit */ = {
 			isa = PBXGroup;
 			children = (
-				10485F7219578AE764CD532A /* Pods-nRF Toolbox.debug.xcconfig */,
-				80046CCC58A5D00193AE05B1 /* Pods-nRF Toolbox.release.xcconfig */,
-				211C8B857C070A24826730D2 /* Pods-nRF ToolboxTests.debug.xcconfig */,
-				DC05EDAED7947668C33A2E7D /* Pods-nRF ToolboxTests.release.xcconfig */,
+				309F08641E6D6A5500B7546A /* NORHKViewController.swift */,
+				309F08691E6D9EAA00B7546A /* NORHKHomeStore.swift */,
+				309F086B1E6EA0F800B7546A /* NORHKScannerViewController.swift */,
+				309F086D1E6ED44F00B7546A /* NORHKScannerDelegate.swift */,
+				309F086F1E6FF1F900B7546A /* NORHKAccessoryViewController.swift */,
 			);
-			name = Pods;
+			path = HomeKit;
 			sourceTree = "<group>";
 		};
 		5214D0CF18881D0200460637 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				30532D5A1D7EC25100208CC5 /* NORDFUConstantsUtility.swift */,
+				52D9BC9D1DD0CB760030E824 /* NORData.swift */,
 				300143261CEC4B9D008379DF /* NORAppUtilities.swift */,
 				300143281CEC59F4008379DF /* NORServiceIdentifiers.swift */,
 				3001432C1CECADFB008379DF /* NORCharacteristicReader.swift */,
@@ -284,7 +314,7 @@
 				5217F40A1859EE0000F2D5BB /* nRF ToolboxTests */,
 				5217F3E41859EE0000F2D5BB /* Frameworks */,
 				5217F3E31859EE0000F2D5BB /* Products */,
-				33A64560CF9923BFDA33479F /* Pods */,
+				022A9DC491EC95659788F163 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -300,7 +330,11 @@
 		5217F3E41859EE0000F2D5BB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+<<<<<<< HEAD
 				C302AFE21DC8A65500D2EF08 /* CocoaLumberjack.framework */,
+=======
+				309F08671E6D706B00B7546A /* HomeKit.framework */,
+>>>>>>> NordicSemiconductor/master
 				522636361C60FFB00054A550 /* libz.tbd */,
 				52BDCBBD1C3FD86900E2680F /* QuartzCore.framework */,
 				52BDCB181C3FD31F00E2680F /* Accelerate.framework */,
@@ -309,8 +343,7 @@
 				5217F3E71859EE0000F2D5BB /* CoreGraphics.framework */,
 				5217F3E91859EE0000F2D5BB /* UIKit.framework */,
 				89CF4D2BA242FBAD9F6C46E9 /* Pods.framework */,
-				210BB56BD40BE6023AD766CE /* Pods_nRF_Toolbox.framework */,
-				9B489CB8F89866477A46903E /* Pods_nRF_ToolboxTests.framework */,
+				24D84A6CFE99FD917A7222B7 /* Pods_nRF_Toolbox.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -318,10 +351,12 @@
 		5217F3EB1859EE0000F2D5BB /* nRF Toolbox */ = {
 			isa = PBXGroup;
 			children = (
+				309F08661E6D706B00B7546A /* nRF Toolbox.entitlements */,
 				A8F1142619C1B7EC007F956E /* StoryBoard */,
 				3069A1D21CDC76FE003869EA /* BluetoothManager */,
 				A85667E31B2233A3004A6D3C /* MainViewController */,
 				5236E166187EA7AA0057E974 /* Scanner */,
+				309F08631E6D6A4300B7546A /* HomeKit */,
 				5252A533188025EC00EFD773 /* BGM */,
 				5252A53718802B6D00EFD773 /* BPM */,
 				5285D9A61890031F00305F1D /* CSC */,
@@ -458,6 +493,7 @@
 			isa = PBXGroup;
 			children = (
 				A85667E21B2230CA004A6D3C /* DFUViewController */,
+				7E996869197FB8FD0092E69E /* Constants */,
 				522636281C5261C90054A550 /* File Type Selection */,
 				7E6ED10C197D1D40008010B6 /* File Selection */,
 				7E6ED10A196ED482008010B6 /* firmwares */,
@@ -504,6 +540,14 @@
 			);
 			name = "File Selection";
 			path = FileSelection;
+			sourceTree = "<group>";
+		};
+		7E996869197FB8FD0092E69E /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				30499E4A1CE4667800E0993B /* NORDFUConstantsUtility.swift */,
+			);
+			path = Constants;
 			sourceTree = "<group>";
 		};
 		A85667DD1B222AA7004A6D3C /* AppImages */ = {
@@ -561,14 +605,19 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5217F4141859EE0000F2D5BB /* Build configuration list for PBXNativeTarget "nRF Toolbox" */;
 			buildPhases = (
-				10D50A7C2893C9E7420FD491 /* [CP] Check Pods Manifest.lock */,
+				ED33C8D3ED1984AAE7F51DD3 /* [CP] Check Pods Manifest.lock */,
 				5217F3DE1859EE0000F2D5BB /* Sources */,
 				5217F3DF1859EE0000F2D5BB /* Frameworks */,
 				5217F3E01859EE0000F2D5BB /* Resources */,
 				0E645A0E1CBF943000D36AD0 /* Embed Frameworks */,
+<<<<<<< HEAD
 				A0C8A1420351C7C12894DF31 /* [CP] Embed Pods Frameworks */,
 				8623E8FC53C27E914EEBA1FB /* [CP] Copy Pods Resources */,
 				CCC37D78B67109A01288B505 /* Embed Pods Frameworks */,
+=======
+				0ED4FF3762A1B098595E6093 /* [CP] Embed Pods Frameworks */,
+				48275A682DFCE468F90A906C /* [CP] Copy Pods Resources */,
+>>>>>>> NordicSemiconductor/master
 			);
 			buildRules = (
 			);
@@ -583,12 +632,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5217F4171859EE0000F2D5BB /* Build configuration list for PBXNativeTarget "nRF ToolboxTests" */;
 			buildPhases = (
-				F6C9E39EA6485644A5470700 /* [CP] Check Pods Manifest.lock */,
 				5217F3FF1859EE0000F2D5BB /* Sources */,
 				5217F4001859EE0000F2D5BB /* Frameworks */,
 				5217F4011859EE0000F2D5BB /* Resources */,
-				6EC63B637CD8C067D20635EA /* [CP] Embed Pods Frameworks */,
-				B5D28EC0C778BC516155BE32 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -606,18 +652,27 @@
 		5217F3DA1859EE0000F2D5BB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Nordic Semiconductor";
 				TargetAttributes = {
 					5217F3E11859EE0000F2D5BB = {
+<<<<<<< HEAD
 						DevelopmentTeam = V6AWR4NCMS;
+=======
+						DevelopmentTeam = P3R8YQEV4L;
+						LastSwiftMigration = 0800;
+>>>>>>> NordicSemiconductor/master
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.HomeKit = {
 								enabled = 1;
 							};
 						};
 					};
 					5217F4021859EE0000F2D5BB = {
+						LastSwiftMigration = 0800;
 						TestTargetID = 5217F3E11859EE0000F2D5BB;
 					};
 				};
@@ -671,52 +726,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		10D50A7C2893C9E7420FD491 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		6EC63B637CD8C067D20635EA /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-nRF ToolboxTests/Pods-nRF ToolboxTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8623E8FC53C27E914EEBA1FB /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-nRF Toolbox/Pods-nRF Toolbox-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A0C8A1420351C7C12894DF31 /* [CP] Embed Pods Frameworks */ = {
+		0ED4FF3762A1B098595E6093 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -731,7 +741,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-nRF Toolbox/Pods-nRF Toolbox-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B5D28EC0C778BC516155BE32 /* [CP] Copy Pods Resources */ = {
+		48275A682DFCE468F90A906C /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -743,9 +753,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-nRF ToolboxTests/Pods-nRF ToolboxTests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-nRF Toolbox/Pods-nRF Toolbox-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+<<<<<<< HEAD
 		CCC37D78B67109A01288B505 /* Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -762,6 +773,9 @@
 			showEnvVarsInLog = 0;
 		};
 		F6C9E39EA6485644A5470700 /* [CP] Check Pods Manifest.lock */ = {
+=======
+		ED33C8D3ED1984AAE7F51DD3 /* [CP] Check Pods Manifest.lock */ = {
+>>>>>>> NordicSemiconductor/master
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -796,15 +810,18 @@
 				3001432B1CEC6D2A008379DF /* NORBGMRecordAccess.swift in Sources */,
 				304D58FF1CE3521900148271 /* NORLogItem.swift in Sources */,
 				3042993C1CE6154100E1D2AB /* NORBaseRevealViewController.swift in Sources */,
+				30499E4B1CE4667800E0993B /* NORDFUConstantsUtility.swift in Sources */,
 				3001432D1CECADFB008379DF /* NORCharacteristicReader.swift in Sources */,
 				3010F6051CDCB4F900CB285A /* NORBPMViewController.swift in Sources */,
+				309F08651E6D6A5500B7546A /* NORHKViewController.swift in Sources */,
 				3000B2131CE3195E00F64CEE /* NOREditPopupViewController.swift in Sources */,
+				52D9BC9E1DD0CB760030E824 /* NORData.swift in Sources */,
 				306ECD621CE61A3600E48BBD /* AppDelegate.swift in Sources */,
 				3001EBB71D1BE1FB008C5C37 /* NORBGMDetailsViewController.swift in Sources */,
 				304D59011CE352B300148271 /* NORLogItemTableViewCell.swift in Sources */,
 				3001EBC51D1C153C008C5C37 /* NORCGMDetailsViewController.swift in Sources */,
 				3080C4711CE06D0E009C2D8C /* NORCSCViewController.swift in Sources */,
-				30532D5B1D7EC25100208CC5 /* NORDFUConstantsUtility.swift in Sources */,
+				309F086E1E6ED44F00B7546A /* NORHKScannerDelegate.swift in Sources */,
 				308EE1781CE0CBF700F2A854 /* NORHTSViewController.swift in Sources */,
 				304D58FB1CE34EE600148271 /* NORLogger.swift in Sources */,
 				304299241CE6114000E1D2AB /* NORTutorialViewController.swift in Sources */,
@@ -812,6 +829,7 @@
 				3001EBBB1D1BE306008C5C37 /* NORCGMReading.swift in Sources */,
 				3001EBB11D1BE1F3008C5C37 /* NORGlucoseReading.swift in Sources */,
 				3000B2151CE32A9200F64CEE /* NORUARTViewController.swift in Sources */,
+				309F086C1E6EA0F800B7546A /* NORHKScannerViewController.swift in Sources */,
 				300508951CE2078A00D93BE0 /* NORRSCViewController.swift in Sources */,
 				30A1145A1CD2426B000F0F02 /* NORScannerDelegate.swift in Sources */,
 				3069A1D71CDC788A003869EA /* NORBluetoothManager.swift in Sources */,
@@ -819,6 +837,7 @@
 				30921FD31CD0E7A5009CBDDE /* NORNavigationController.swift in Sources */,
 				3042993D1CE6154100E1D2AB /* NORBaseViewController.swift in Sources */,
 				30A114561CD2367C000F0F02 /* NORScannedPeripheral.swift in Sources */,
+				309F08701E6FF1F900B7546A /* NORHKAccessoryViewController.swift in Sources */,
 				3001EBC31D1C1430008C5C37 /* NORCGMItemCell.swift in Sources */,
 				3001EBB91D1BE1FB008C5C37 /* NORBGMViewController.swift in Sources */,
 				30499E4D1CE4687300E0993B /* NORFileTypeSelectionDelegate.swift in Sources */,
@@ -826,6 +845,7 @@
 				3001EBBD1D1BE695008C5C37 /* NORCGMFeatureData.swift in Sources */,
 				3001EBB81D1BE1FB008C5C37 /* NORBGMItemCell.swift in Sources */,
 				300143271CEC4B9D008379DF /* NORAppUtilities.swift in Sources */,
+				309F086A1E6D9EAA00B7546A /* NORHKHomeStore.swift in Sources */,
 				30499E591CE4A07700E0993B /* NORAppFilesViewController.swift in Sources */,
 				3001EBBF1D1BE727008C5C37 /* NORCGMSpecificOperations.swift in Sources */,
 				30499E4F1CE4688700E0993B /* NORFileTypeViewController.swift in Sources */,
@@ -882,6 +902,7 @@
 		5217F4121859EE0000F2D5BB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				"ARCHS[sdk=*]" = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -893,16 +914,20 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -927,6 +952,7 @@
 		5217F4131859EE0000F2D5BB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				"ARCHS[sdk=*]" = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -938,15 +964,19 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -957,6 +987,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
@@ -964,16 +995,26 @@
 		};
 		5217F4151859EE0000F2D5BB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 10485F7219578AE764CD532A /* Pods-nRF Toolbox.debug.xcconfig */;
+			baseConfigurationReference = 0A455719E4780A53A451F09C /* Pods-nRF Toolbox.debug.xcconfig */;
 			buildSettings = {
+<<<<<<< HEAD
 				ALWAYS_SEARCH_USER_PATHS = NO;
+=======
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				ALWAYS_SEARCH_USER_PATHS = "$(inherited)";
+>>>>>>> NordicSemiconductor/master
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "nRF Toolbox/nRF Toolbox.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = NO;
+<<<<<<< HEAD
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = "$(inherited)";
 				ENABLE_BITCODE = NO;
+=======
+				ENABLE_BITCODE = YES;
+>>>>>>> NordicSemiconductor/master
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1006,6 +1047,7 @@
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "$(VALID_ARCHS)";
 				WRAPPER_EXTENSION = app;
@@ -1014,16 +1056,26 @@
 		};
 		5217F4161859EE0000F2D5BB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 80046CCC58A5D00193AE05B1 /* Pods-nRF Toolbox.release.xcconfig */;
+			baseConfigurationReference = 28F7349095038A3F55F27F8C /* Pods-nRF Toolbox.release.xcconfig */;
 			buildSettings = {
+<<<<<<< HEAD
 				ALWAYS_SEARCH_USER_PATHS = NO;
+=======
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				ALWAYS_SEARCH_USER_PATHS = "$(inherited)";
+>>>>>>> NordicSemiconductor/master
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "nRF Toolbox/nRF Toolbox.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = NO;
+<<<<<<< HEAD
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = "$(inherited)";
 				ENABLE_BITCODE = NO;
+=======
+				ENABLE_BITCODE = YES;
+>>>>>>> NordicSemiconductor/master
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1055,6 +1107,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "$(VALID_ARCHS)";
 				WRAPPER_EXTENSION = app;
@@ -1063,7 +1116,6 @@
 		};
 		5217F4181859EE0000F2D5BB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 211C8B857C070A24826730D2 /* Pods-nRF ToolboxTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/nRF Toolbox.app/nRF Toolbox";
 				CLANG_ENABLE_MODULES = YES;
@@ -1083,6 +1135,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "no.nordicsemi.ios.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -1090,7 +1143,6 @@
 		};
 		5217F4191859EE0000F2D5BB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DC05EDAED7947668C33A2E7D /* Pods-nRF ToolboxTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/nRF Toolbox.app/nRF Toolbox";
 				CLANG_ENABLE_MODULES = YES;
@@ -1105,6 +1157,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "no.nordicsemi.ios.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};

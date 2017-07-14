@@ -9,13 +9,31 @@
 import UIKit
 import CoreBluetooth
 
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+    switch (lhs, rhs) {
+    case let (l?, r?):
+        return l < r
+    case (nil, _?):
+        return true
+    default:
+        return false
+    }
+}
+
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+    switch (lhs, rhs) {
+    case let (l?, r?):
+        return l > r
+    default:
+        return rhs < lhs
+    }
+}
+
 protocol NORBluetoothManagerDelegate {
-    
-    func didConnectPeripheral(deviceName aName : String)
+    func didConnectPeripheral(deviceName aName : String?)
     func didDisconnectPeripheral()
     func peripheralReady()
     func peripheralNotSupported()
-    
 }
 
 class NORBluetoothManager: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate {
@@ -25,323 +43,374 @@ class NORBluetoothManager: NSObject, CBPeripheralDelegate, CBCentralManagerDeleg
     var logger   : NORLogger?
     
     //MARK: - Class Properties
-    var UARTServiceUUID             : CBUUID?
-    var UARTRXCharacteristicUUID    : CBUUID?
-    var UARTTXCharacteristicUUID    : CBUUID?
+    fileprivate let MTU = 20
+    fileprivate let UARTServiceUUID             : CBUUID
+    fileprivate let UARTRXCharacteristicUUID    : CBUUID
+    fileprivate let UARTTXCharacteristicUUID    : CBUUID
     
-    var centralManager              : CBCentralManager?
-    var bluetoothPeripheral         : CBPeripheral?
-    var uartRXCharacteristic        : CBCharacteristic?
-    var uartTXCharacteristic        : CBCharacteristic?
-
-    //MARK: - Implementation
+    fileprivate var centralManager              : CBCentralManager
+    fileprivate var bluetoothPeripheral         : CBPeripheral?
+    fileprivate var uartRXCharacteristic        : CBCharacteristic?
+    fileprivate var uartTXCharacteristic        : CBCharacteristic?
+    
+    fileprivate var connected = false
+    
+    //MARK: - BluetoothManager API
+    
     required init(withManager aManager : CBCentralManager) {
-        super.init()
-        // ret: instancetype
+        centralManager = aManager
         UARTServiceUUID          = CBUUID(string: NORServiceIdentifiers.uartServiceUUIDString)
         UARTTXCharacteristicUUID = CBUUID(string: NORServiceIdentifiers.uartTXCharacteristicUUIDString)
         UARTRXCharacteristicUUID = CBUUID(string: NORServiceIdentifiers.uartRXCharacteristicUUIDString)
-        centralManager = aManager
-        centralManager?.delegate = self
+        super.init()
+        
+        centralManager.delegate = self
     }
     
-    //MARK: - BluetoothManager API
+    /**
+     * Connects to the given peripheral.
+     * 
+     * - parameter aPeripheral: target peripheral to connect to
+     */
     func connectPeripheral(peripheral aPeripheral : CBPeripheral) {
+        bluetoothPeripheral = aPeripheral
+        
         // we assign the bluetoothPeripheral property after we establish a connection, in the callback
-        log(withLevel: .VerboseLogLevel, andMessage: "Connecting to: \(aPeripheral.name!) ...")
-        log(withLevel: .DebugLogLevel, andMessage: "centralManager.connectPeripheral(peripheral, options:nil")
-        centralManager?.connectPeripheral(aPeripheral, options: nil)
+        if let name = aPeripheral.name {
+            log(withLevel: .verboseLogLevel, andMessage: "Connecting to: \(name)...")
+        } else {
+            log(withLevel: .verboseLogLevel, andMessage: "Connecting to device...")
+        }
+        log(withLevel: .debugLogLevel, andMessage: "centralManager.connect(peripheral, options:nil)")
+        centralManager.connect(aPeripheral, options: nil)
     }
     
-    func cancelPeriphralConnection() {
+    /**
+     * Disconnects or cancels pending connection.
+     * The delegate's didDisconnectPeripheral() method will be called when device got disconnected.
+     */
+    func cancelPeripheralConnection() {
         guard bluetoothPeripheral != nil else {
-            log(withLevel: .WarningLogLevel, andMessage: "Peripheral not set")
+            log(withLevel: .warningLogLevel, andMessage: "Peripheral not set")
             return
         }
-        log(withLevel: .VerboseLogLevel, andMessage: "Disconnecting...")
-        log(withLevel: .DebugLogLevel, andMessage: "centralManager.cancelPeriphralConnection(peripheral)")
-        centralManager?.cancelPeripheralConnection(bluetoothPeripheral!)
+        if connected {
+            log(withLevel: .verboseLogLevel, andMessage: "Disconnecting...")
+        } else {
+            log(withLevel: .verboseLogLevel, andMessage: "Cancelling connection...")
+        }
+        log(withLevel: .debugLogLevel, andMessage: "centralManager.cancelPeripheralConnection(peripheral)")
+        centralManager.cancelPeripheralConnection(bluetoothPeripheral!)
+        
+        // In case the previous connection attempt failed before establishing a connection
+        if !connected {
+            bluetoothPeripheral = nil
+            delegate?.didDisconnectPeripheral()
+        }
     }
     
-    
+    /**
+     * Returns true if the peripheral device is connected, false otherwise
+     * - returns: true if device is connected
+     */
     func isConnected() -> Bool {
-        return bluetoothPeripheral != nil
+        return connected
     }
     
+    /**
+     * This method sends the given test to the UART RX characteristic.
+     * Depending on whether the characteristic has the Write Without Response or Write properties the behaviour is different.
+     * In the latter case the Long Write may be used. To enable it you have to change the flag below in the code.
+     * Otherwise, in both cases, texts longer than 20 (MTU) bytes (not characters) will be splitted into up-to 20-byte packets.
+     *
+     * - parameter aText: text to be sent to the peripheral using Nordic UART Service
+     */
     func send(text aText : String) {
-        /*
-         * This method sends the given test to the UART RX characteristic.
-         * Depending on whether the characteristic has the Write Without Response or Write properties the behaviour is different.
-         * In the latter case the Long Write may be used. To enable it you have to change the flag below.
-         * Otherwise, in both cases, texts longer than 20 bytes (not characters) will be splitted into up-to 20-byte packets.
-         */
         guard self.uartRXCharacteristic != nil else {
-            log(withLevel: .WarningLogLevel, andMessage: "UART RX Characteristic not set!")
+            log(withLevel: .warningLogLevel, andMessage: "UART RX Characteristic not found")
             return
         }
         
         // Check what kind of Write Type is supported. By default it will try Without Response.
-        var type = CBCharacteristicWriteType.WithoutResponse
-        if (self.uartRXCharacteristic?.properties.rawValue)! & CBCharacteristicProperties.Write.rawValue > 0 {
-            type = CBCharacteristicWriteType.WithResponse
+        // If the RX charactereisrtic have Write property the Write Request type will be used.
+        var type = CBCharacteristicWriteType.withoutResponse
+        if (self.uartRXCharacteristic!.properties.rawValue & CBCharacteristicProperties.write.rawValue) > 0 {
+            type = CBCharacteristicWriteType.withResponse
         }
-
+        
         // In case of Write Without Response the text needs to be splited in up-to 20-bytes packets.
-        // When Write Request (with response) is used, the Long Write may be used. It will be handled automatically by the iOS, but must be supported on the device side.
-        // If your device does support Long Write, change the flag here.
+        // When Write Request (with response) is used, the Long Write may be used. 
+        // It will be handled automatically by the iOS, but must be supported on the device side.
+        // If your device does support Long Write, change the flag below to true.
         let longWriteSupported = false
         
         // The following code will split the text to packets
-        var buffer = UnsafeMutablePointer<CChar>(aText.cStringUsingEncoding(NSUTF8StringEncoding)!)
-        print(buffer)
-        var len = aText.dataUsingEncoding(NSUTF8StringEncoding)?.length
-        
-        while(buffer != nil){
-            var part : String
-            if len > 20 && (type == CBCharacteristicWriteType.WithoutResponse || longWriteSupported == false) {
-                // If the text contains national letters they may be 2-byte long. It may happen that only 19 bytes can be send so that non of them is splited into 2 packets.
-                var builder = NSMutableString(bytes: buffer, length: 20, encoding: NSUTF8StringEncoding)
-                if builder != nil {
-                    // A 20-bute string has been created successfully
-                    buffer  = buffer + 20
-                    len     = len! - 20
+        let textData = aText.data(using: String.Encoding.utf8)!
+        textData.withUnsafeBytes { (u8Ptr: UnsafePointer<CChar>) in
+            var buffer = UnsafeMutableRawPointer(mutating: UnsafeRawPointer(u8Ptr))
+            var len = textData.count
+            
+            while(len != 0){
+                var part : String
+                if len > MTU && (type == CBCharacteristicWriteType.withoutResponse || longWriteSupported == false) {
+                    // If the text contains national letters they may be 2-byte long. 
+                    // It may happen that only 19 (MTU) bytes can be send so that not of them is splited into 2 packets.
+                    var builder = NSMutableString(bytes: buffer, length: MTU, encoding: String.Encoding.utf8.rawValue)
+                    if builder != nil {
+                        // A 20-byte string has been created successfully
+                        buffer  = buffer + MTU
+                        len     = len - MTU
+                    } else {
+                        // We have to create 19-byte string. Let's ignore some stranger UTF-8 characters that have more than 2 bytes...
+                        builder = NSMutableString(bytes: buffer, length: (MTU - 1), encoding: String.Encoding.utf8.rawValue)
+                        buffer = buffer + (MTU - 1)
+                        len    = len - (MTU - 1)
+                    }
+                    
+                    part = String(describing: builder!)
                 } else {
-                    // We have to create 19-byte string. Let's ignore some stranger UTF-8 characters that have more than 2 bytes...
-                    builder = NSMutableString(bytes: buffer, length: 19, encoding: NSUTF8StringEncoding)
-                    buffer = buffer + 19
-                    len    = len! - 19
+                    let builder = NSMutableString(bytes: buffer, length: len, encoding: String.Encoding.utf8.rawValue)
+                    part = String(describing: builder!)
+                    len = 0
                 }
-                
-                part = String(builder)
-            } else {
-                part = String(buffer)
-                buffer = nil
+                send(text: part, withType: type)
             }
-            self.send(text: part, withType: type)
         }
     }
     
-    /*!
+    /**
      * Sends the given text to the UART RX characteristic using the given write type.
+     * This method does not split the text into parts. If the given write type is withResponse
+     * and text is longer than 20-bytes the long write will be used.
+     *
+     * - parameters:
+     *     - aText: text to be sent to the peripheral using Nordic UART Service
+     *     - aType: write type to be used
      */
     func send(text aText : String, withType aType : CBCharacteristicWriteType) {
-        var typeAsString = "CBCharacteristicWriteWithoutResponse"
-        if (self.uartRXCharacteristic?.properties.rawValue)! & CBCharacteristicProperties.Write.rawValue > 0 {
-            typeAsString = "CBCharacteristicWriteWithResponse"
+        guard self.uartRXCharacteristic != nil else {
+            log(withLevel: .warningLogLevel, andMessage: "UART RX Characteristic not found")
+            return
         }
         
-        let data = aText.dataUsingEncoding(NSUTF8StringEncoding)
+        let typeAsString = aType == .withoutResponse ? ".withoutResponse" : ".withResponse"
+        let data = aText.data(using: String.Encoding.utf8)!
         
         //do some logging
-        log(withLevel: .VerboseLogLevel, andMessage: "Writing to characteristic: \(uartRXCharacteristic?.UUID.UUIDString)")
-        log(withLevel: .DebugLogLevel, andMessage: "centralManager.writeValue(\(data), forCharacteristic:\(uartRXCharacteristic?.UUID.UUIDString), type:\(typeAsString)")
-        self.bluetoothPeripheral?.writeValue(data!, forCharacteristic: self.uartRXCharacteristic!, type: aType)
+        log(withLevel: .verboseLogLevel, andMessage: "Writing to characteristic: \(uartRXCharacteristic!.uuid.uuidString)")
+        log(withLevel: .debugLogLevel, andMessage: "peripheral.writeValue(0x\(data.hexString), for: \(uartRXCharacteristic!.uuid.uuidString), type: \(typeAsString))")
+        self.bluetoothPeripheral!.writeValue(data, for: self.uartRXCharacteristic!, type: aType)
         // The transmitted data is not available after the method returns. We have to log the text here.
         // The callback peripheral:didWriteValueForCharacteristic:error: is called only when the Write Request type was used,
         // but even if, the data is not available there.
-        log(withLevel: .AppLogLevel, andMessage: "\(aText) sent.")
+        log(withLevel: .appLogLevel, andMessage: "\"\(aText)\" sent")
     }
-
+    
+    //MARK: - Logger API
+    
+    func log(withLevel aLevel : NORLOGLevel, andMessage aMessage : String) {
+        logger?.log(level: aLevel,message: aMessage)
+    }
+    
+    func logError(error anError : Error) {
+        if let e = anError as? CBError {
+            logger?.log(level: .errorLogLevel, message: "Error \(e.code): \(e.localizedDescription)")
+        } else {
+            logger?.log(level: .errorLogLevel, message: "Error \(anError.localizedDescription)")
+        }
+    }
     
     //MARK: - CBCentralManagerDelegate
-    func centralManagerDidUpdateState(central: CBCentralManager) {
+    
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
         var state : String
         switch(central.state){
-        case .PoweredOn:
+        case .poweredOn:
             state = "Powered ON"
             break
-        case .PoweredOff:
+        case .poweredOff:
             state = "Powered OFF"
             break
-        case .Resetting:
+        case .resetting:
             state = "Resetting"
             break
-        case .Unauthorized:
+        case .unauthorized:
             state = "Unautthorized"
             break
-        case .Unsupported:
+        case .unsupported:
             state = "Unsupported"
             break
-        case .Unknown:
+        case .unknown:
             state = "Unknown"
             break
         }
         
-        self.log(withLevel: .DebugLogLevel, andMessage: String(format: "[Callback] Central Manager did update state to: %@", state))
+        log(withLevel: .debugLogLevel, andMessage: "[Callback] Central Manager did update state to: \(state)")
     }
     
-    //MARK: - Logger API
-
-    func log(withLevel aLevel : NORLOGLevel, andMessage aMessage : String) {
-        guard logger != nil else {
-            return
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+        log(withLevel: .debugLogLevel, andMessage: "[Callback] Central Manager did connect peripheral")
+        if let name = peripheral.name {
+            log(withLevel: .infoLogLevel, andMessage: "Connected to: \(name)")
+        } else {
+            log(withLevel: .infoLogLevel, andMessage: "Connected to device")
         }
-        logger?.log(level: aLevel,message: aMessage)
-    }
-    
-    func logError(error anError : NSError) {
-        guard logger != nil else {
-            return
-        }
-        logger?.log(level: .ErrorLogLevel, message: String(format: "Error %ld: %@", anError.code, anError.localizedDescription))
-    }
-    
-    func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
-        self.log(withLevel: .DebugLogLevel, andMessage: String(format: "[Callback] Central manager did connect peripheral"))
-        self.log(withLevel: .InfoLogLevel, andMessage: String("Connected to : \(peripheral.name)"))
         
+        connected = true
         bluetoothPeripheral = peripheral
-        bluetoothPeripheral?.delegate = self
-        delegate?.didConnectPeripheral(deviceName: peripheral.name!)
-        log(withLevel: .VerboseLogLevel, andMessage: "Discovering services...")
-        log(withLevel: .DebugLogLevel, andMessage: String("Peripheral.discoverServices(\(UARTServiceUUID?.UUIDString))"))
-        peripheral.discoverServices([UARTServiceUUID!])
+        bluetoothPeripheral!.delegate = self
+        delegate?.didConnectPeripheral(deviceName: peripheral.name)
+        log(withLevel: .verboseLogLevel, andMessage: "Discovering services...")
+        log(withLevel: .debugLogLevel, andMessage: "peripheral.discoverServices([\(UARTServiceUUID.uuidString)])")
+        peripheral.discoverServices([UARTServiceUUID])
     }
     
-    func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         guard error == nil else {
-            log(withLevel: .DebugLogLevel, andMessage: "[Callback] CentralManager did disconnect peripheral")
+            log(withLevel: .debugLogLevel, andMessage: "[Callback] Central Manager did disconnect peripheral")
             logError(error: error!)
             return
         }
-        log(withLevel: .DebugLogLevel, andMessage: "[Callback] Central Manager did disconnect peripheral successfully")
-        log(withLevel: .InfoLogLevel, andMessage: "Disconnected")
+        log(withLevel: .debugLogLevel, andMessage: "[Callback] Central Manager did disconnect peripheral successfully")
+        log(withLevel: .infoLogLevel, andMessage: "Disconnected")
         
+        connected = false
         delegate?.didDisconnectPeripheral()
-        bluetoothPeripheral?.delegate = nil
+        bluetoothPeripheral!.delegate = nil
         bluetoothPeripheral = nil
     }
     
-    func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         guard error == nil else {
-            log(withLevel: .DebugLogLevel, andMessage: "[Callback] Central Manager did fail to connect to peripheral")
+            log(withLevel: .debugLogLevel, andMessage: "[Callback] Central Manager did fail to connect to peripheral")
             logError(error: error!)
             return
         }
-        log(withLevel: .DebugLogLevel, andMessage: "[Callback] Central Manager did fail to connect to peripheral without errors")
+        log(withLevel: .debugLogLevel, andMessage: "[Callback] Central Manager did fail to connect to peripheral without errors")
+        log(withLevel: .infoLogLevel, andMessage: "Failed to connect")
         
+        connected = false
         delegate?.didDisconnectPeripheral()
-        bluetoothPeripheral?.delegate = nil
+        bluetoothPeripheral!.delegate = nil
         bluetoothPeripheral = nil
     }
-
+    
     //MARK: - CBPeripheralDelegate
     
-    func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         guard error == nil else {
-            log(withLevel: .WarningLogLevel, andMessage: "Service discovery failed")
+            log(withLevel: .warningLogLevel, andMessage: "Service discovery failed")
             logError(error: error!)
             //TODO: Disconnect?
             return
         }
         
-        log(withLevel: .InfoLogLevel, andMessage: "Services discovered")
+        log(withLevel: .infoLogLevel, andMessage: "Services discovered")
         
         for aService: CBService in peripheral.services! {
-            if aService.UUID.isEqual(UARTServiceUUID) {
-                log(withLevel: .VerboseLogLevel, andMessage: "Nordic UART Service found")
-                log(withLevel: .VerboseLogLevel, andMessage: "Discovering characteristics...")
-                log(withLevel: .DebugLogLevel, andMessage: "peripheral.discoverCharacteristics(nil, forService:\(aService.UUID.UUIDString)")
-                bluetoothPeripheral?.discoverCharacteristics(nil, forService: aService)
+            if aService.uuid.isEqual(UARTServiceUUID) {
+                log(withLevel: .verboseLogLevel, andMessage: "Nordic UART Service found")
+                log(withLevel: .verboseLogLevel, andMessage: "Discovering characteristics...")
+                log(withLevel: .debugLogLevel, andMessage: "peripheral.discoverCharacteristics(nil, for: \(aService.uuid.uuidString))")
+                bluetoothPeripheral!.discoverCharacteristics(nil, for: aService)
                 return
             }
         }
         
         //No UART service discovered
-        log(withLevel: .WarningLogLevel, andMessage: "UART Service not found. Try to turn bluetooth Off and On again to clear the cache.")
+        log(withLevel: .warningLogLevel, andMessage: "UART Service not found. Try to turn bluetooth Off and On again to clear the cache.")
         delegate?.peripheralNotSupported()
-        cancelPeriphralConnection()
+        cancelPeripheralConnection()
     }
     
-    func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         guard error == nil else {
-            log(withLevel: .WarningLogLevel, andMessage: "Characteristics discovery failed")
+            log(withLevel: .warningLogLevel, andMessage: "Characteristics discovery failed")
             logError(error: error!)
             return
         }
-        log(withLevel: .InfoLogLevel, andMessage: "Characteristics discovererd")
+        log(withLevel: .infoLogLevel, andMessage: "Characteristics discovered")
         
-        if service.UUID.isEqual(UARTServiceUUID) {
+        if service.uuid.isEqual(UARTServiceUUID) {
             for aCharacteristic : CBCharacteristic in service.characteristics! {
-                if aCharacteristic.UUID.isEqual(UARTTXCharacteristicUUID) {
-                    log(withLevel: .VerboseLogLevel, andMessage: "TX Characteristic found")
+                if aCharacteristic.uuid.isEqual(UARTTXCharacteristicUUID) {
+                    log(withLevel: .verboseLogLevel, andMessage: "TX Characteristic found")
                     uartTXCharacteristic = aCharacteristic
-                }else if aCharacteristic.UUID.isEqual(UARTRXCharacteristicUUID) {
-                    log(withLevel: .VerboseLogLevel, andMessage: "RX Characteristic found")
+                } else if aCharacteristic.uuid.isEqual(UARTRXCharacteristicUUID) {
+                    log(withLevel: .verboseLogLevel, andMessage: "RX Characteristic found")
                     uartRXCharacteristic = aCharacteristic
                 }
             }
             //Enable notifications on TX Characteristic
-            if(uartTXCharacteristic != nil && uartRXCharacteristic != nil) {
-                log(withLevel: .VerboseLogLevel, andMessage: "Enableg notifications for \(uartTXCharacteristic?.UUID.UUIDString)")
-                log(withLevel: .DebugLogLevel, andMessage: "peripheral.setNotifyValue(true, forCharacteristic: \(uartTXCharacteristic?.UUID.UUIDString)")
-                bluetoothPeripheral?.setNotifyValue(true, forCharacteristic: uartTXCharacteristic!)
-            }else{
-                log(withLevel: .WarningLogLevel, andMessage: "UART service does not have required characteristics. Try to turn Bluetooth OFF and ON again to clear cache.")
+            if (uartTXCharacteristic != nil && uartRXCharacteristic != nil) {
+                log(withLevel: .verboseLogLevel, andMessage: "Enabling notifications for \(uartTXCharacteristic!.uuid.uuidString)")
+                log(withLevel: .debugLogLevel, andMessage: "peripheral.setNotifyValue(true, for: \(uartTXCharacteristic!.uuid.uuidString))")
+                bluetoothPeripheral!.setNotifyValue(true, for: uartTXCharacteristic!)
+            } else {
+                log(withLevel: .warningLogLevel, andMessage: "UART service does not have required characteristics. Try to turn Bluetooth Off and On again to clear cache.")
                 delegate?.peripheralNotSupported()
-                cancelPeriphralConnection()
+                cancelPeripheralConnection()
             }
         }
-        
     }
     
-    func peripheral(peripheral: CBPeripheral, didUpdateNotificationStateForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
+    func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         guard error == nil else {
-            log(withLevel: .WarningLogLevel, andMessage: "Enabling notifications failed")
+            log(withLevel: .warningLogLevel, andMessage: "Enabling notifications failed")
             logError(error: error!)
             return
         }
         
         if characteristic.isNotifying {
-            log(withLevel: .InfoLogLevel, andMessage: "Notifications enabled for characteristic : \(characteristic.UUID.UUIDString)")
-        }else{
-            log(withLevel: .InfoLogLevel, andMessage: "Notifications disabled for characteristic : \(characteristic.UUID.UUIDString)")
+            log(withLevel: .infoLogLevel, andMessage: "Notifications enabled for characteristic: \(characteristic.uuid.uuidString)")
+        } else {
+            log(withLevel: .infoLogLevel, andMessage: "Notifications disabled for characteristic: \(characteristic.uuid.uuidString)")
+        }
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+        guard error == nil else {
+            log(withLevel: .warningLogLevel, andMessage: "Writing value to characteristic has failed")
+            logError(error: error!)
+            return
+        }
+        log(withLevel: .infoLogLevel, andMessage: "Data written to characteristic: \(characteristic.uuid.uuidString)")
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor descriptor: CBDescriptor, error: Error?) {
+        guard error == nil else {
+            log(withLevel: .warningLogLevel, andMessage: "Writing value to descriptor has failed")
+            logError(error: error!)
+            return
+        }
+        log(withLevel: .infoLogLevel, andMessage: "Data written to descriptor: \(descriptor.uuid.uuidString)")
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+        guard error == nil else {
+            log(withLevel: .warningLogLevel, andMessage: "Updating characteristic has failed")
+            logError(error: error!)
+            return
         }
         
-    }
-    
-    func peripheral(peripheral: CBPeripheral, didWriteValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
-        guard error == nil else {
-            log(withLevel: .WarningLogLevel, andMessage: "Writing value to characteristic has failed")
-            logError(error: error!)
+        // try to print a friendly string of received bytes if they can be parsed as UTF8
+        guard let bytesReceived = characteristic.value else {
+            log(withLevel: .infoLogLevel, andMessage: "Notification received from: \(characteristic.uuid.uuidString), with empty value")
+            log(withLevel: .appLogLevel, andMessage: "Empty packet received")
             return
         }
-        log(withLevel: .InfoLogLevel, andMessage: "Data written to characteristic: \(characteristic.UUID.UUIDString)")
-    }
-    
-    func peripheral(peripheral: CBPeripheral, didWriteValueForDescriptor descriptor: CBDescriptor, error: NSError?) {
-        guard error == nil else {
-            log(withLevel: .WarningLogLevel, andMessage: "Writing value to descriptor has failed")
-            logError(error: error!)
-            return
+        bytesReceived.withUnsafeBytes { (utf8Bytes: UnsafePointer<CChar>) in
+            var len = bytesReceived.count
+            if utf8Bytes[len - 1] == 0 {
+                len -= 1 // if the string is null terminated, don't pass null terminator into NSMutableString constructor
+            }
+            
+            log(withLevel: .infoLogLevel, andMessage: "Notification received from: \(characteristic.uuid.uuidString), with value: 0x\(bytesReceived.hexString)")
+            if let validUTF8String = String(utf8String: utf8Bytes) {//  NSMutableString(bytes: utf8Bytes, length: len, encoding: String.Encoding.utf8.rawValue) {
+                log(withLevel: .appLogLevel, andMessage: "\"\(validUTF8String)\" received")
+            } else {
+                log(withLevel: .appLogLevel, andMessage: "\"0x\(bytesReceived.hexString)\" received")
+            }
         }
-        log(withLevel: .InfoLogLevel, andMessage: "Data written to descriptor: \(descriptor.UUID.UUIDString)")
     }
-    
-    func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
-        guard error == nil else {
-            log(withLevel: .WarningLogLevel, andMessage: "Updating characteristic has failed")
-            logError(error: error!)
-            return
-        }
-        log(withLevel: .InfoLogLevel, andMessage: "Notification received from: \(characteristic.UUID.UUIDString), with value: \(characteristic.value)")
-        log(withLevel: .AppLogLevel, andMessage: "\(characteristic.value) received")
-    }
-
-//    //MARK: - NORBluetoothManagerDelegate
-//    func didConnectPeripheral(deviceName aName: String) {
-//        
-//    }
-//    
-//    func didDisconnectPeripheral() {
-//        
-//    }
-//    
-//    func peripheralReady() {
-//        
-//    }
-//    
-//    func peripheralNotSupported() {
-//
-//    }
 }

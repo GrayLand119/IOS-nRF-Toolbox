@@ -2,4 +2,10 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Private" "${PODS_ROOT}/Headers/Private/iOSDFULibrary" "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/UMengAnalytics-NO-IDFA"
 OTHER_SWIFT_FLAGS = $(inherited) "-D" "COCOAPODS"
 PODS_ROOT = ${SRCROOT}
+<<<<<<< HEAD
 SKIP_INSTALL = YES
+=======
+PODS_TARGET_SRCROOT = ${PODS_ROOT}/iOSDFULibrary
+PRODUCT_BUNDLE_IDENTIFIER = org.cocoapods.${PRODUCT_NAME:rfc1034identifier}
+SKIP_INSTALL = YES
+>>>>>>> NordicSemiconductor/master

@@ -15,7 +15,7 @@ import CoreBluetooth
     var RSSI        : Int32
     var isConnected : Bool
     
-    init(withPeripheral aPeripheral: CBPeripheral, andRSSI anRSSI:Int32, andIsConnected aConnectionStatus: Bool) {
+    init(withPeripheral aPeripheral: CBPeripheral, andRSSI anRSSI:Int32 = 0, andIsConnected aConnectionStatus: Bool) {
         peripheral = aPeripheral
         RSSI = anRSSI
         isConnected = aConnectionStatus
@@ -30,8 +30,10 @@ import CoreBluetooth
         }
     }
     
-    override func isEqual(object: AnyObject?) -> Bool {
-        let otherPeripheral : NORScannedPeripheral = object as! NORScannedPeripheral
-        return peripheral == otherPeripheral.peripheral
+    override func isEqual(_ object: Any?) -> Bool {
+        if let otherPeripheral = object as? NORScannedPeripheral {
+            return peripheral == otherPeripheral.peripheral
+        }
+        return false
     }
 }

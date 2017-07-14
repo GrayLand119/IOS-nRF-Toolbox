@@ -12,7 +12,7 @@ class NORLogViewController: UIViewController, UITextFieldDelegate, UITableViewDa
     
     //MARK: - Properties
     var bluetoothManager : NORBluetoothManager?
-    var logItems         : NSMutableArray?
+    var logItems         : NSMutableArray
     
     //MARK: - View Outlets
     @IBOutlet weak var displayLogTextTable : UITableView!
@@ -22,8 +22,8 @@ class NORLogViewController: UIViewController, UITextFieldDelegate, UITableViewDa
     
     //MARK: - UIViewDelegate
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
         logItems = NSMutableArray()
+        super.init(coder: aDecoder)
     }
     
     override func viewDidLoad() {
@@ -37,39 +37,44 @@ class NORLogViewController: UIViewController, UITextFieldDelegate, UITableViewDa
         commandTextField.delegate = self
     }
     
+    func clearLog() {
+        logItems.removeAllObjects()
+        displayLogTextTable?.reloadData() // The table may not be initialized here
+    }
+    
     //MARK: - NORLoggerViewController implementation
     func getCurrentTime() -> String {
-        let now = NSDate()
-        let outputFormatter = NSDateFormatter()
+        let now = Date()
+        let outputFormatter = DateFormatter()
         outputFormatter.dateFormat = "HH:mm:ss.SSS"
-        let timeString = outputFormatter.stringFromDate(now)
+        let timeString = outputFormatter.string(from: now)
         
         return timeString
     }
     
     func scrollDisplayViewDown() {
-        displayLogTextTable.scrollToRowAtIndexPath(NSIndexPath(forRow: logItems!.count-1, inSection: 0), atScrollPosition: UITableViewScrollPosition.Bottom, animated: true)
+        displayLogTextTable.scrollToRow(at: IndexPath(row: displayLogTextTable.numberOfRows(inSection: 0) - 1, section: 0), at: UITableViewScrollPosition.bottom, animated: true)
     }
 
-//    func setManager(aManager : NORBluetoothManager?) {
-//        bluetoothManager = aManager
-//        
-//        if bluetoothManager != nil {
-//            commandTextField.placeholder = "Write command"
-//            commandTextField.text = ""
-//        }else{
-//            commandTextField.placeholder = "No UART service connected"
-//            commandTextField.text = ""
-//        }
-//    }
+    func setManager(aManager : NORBluetoothManager?) {
+        bluetoothManager = aManager
+        
+        if bluetoothManager != nil {
+            commandTextField.placeholder = "Write command"
+            commandTextField.text = ""
+        } else {
+            commandTextField.placeholder = "No UART service connected"
+            commandTextField.text = ""
+        }
+    }
 
     //MARK: - UITextViewDelegate
-    func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
-        //Only shows the keyboard when a UART peripheral is connected
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        // Only shows the keyboard when a UART peripheral is connected
         return bluetoothManager != nil
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.commandTextField.resignFirstResponder()
         bluetoothManager!.send(text: self.commandTextField.text!)
         self.commandTextField.text = ""
@@ -77,14 +82,14 @@ class NORLogViewController: UIViewController, UITextFieldDelegate, UITableViewDa
     }
 
     //MARK: - UITableViewDataSource
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return (logItems?.count)!
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return logItems.count
     }
     
     //MARK: - UITableViewDelegate
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("logCell") as! NORLogItemTableViewCell
-        let item = logItems?.objectAtIndex(indexPath.row) as! NORLogItem
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "logCell") as! NORLogItemTableViewCell
+        let item = logItems.object(at: (indexPath as NSIndexPath).row) as! NORLogItem
         cell.setItem(item: item)
         return cell
     }
@@ -95,9 +100,9 @@ class NORLogViewController: UIViewController, UITextFieldDelegate, UITableViewDa
         item.level = aLevel
         item.message = aMessage
         item.timestamp = getCurrentTime()
-        logItems?.addObject(item)
+        logItems.add(item)
         
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             //TODO: this is a bad fix to get things done, do not release!
             if self.displayLogTextTable != nil {
                 self.displayLogTextTable!.reloadData()
